@@ -1,0 +1,1 @@
+g++ -g -o main main.cpp knigh2t.cpp -I . -std=c++11 -DDEBUG
