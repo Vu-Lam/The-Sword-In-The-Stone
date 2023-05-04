@@ -5,19 +5,40 @@
 
 // #define DEBUG
 
-enum ItemType {/* TODO: */};
+enum ItemType
+{ /* TODO: */
+  Antidote,
+  PhoenixDownI,
+  PhoenixDownII,
+  PhoenixDownIII,
+  PhoenixDownIV
+};
 
-class BaseBag {
+class BaseBag
+{
 public:
-    virtual bool insertFirst(BaseItem * item);
-    virtual BaseItem * get(ItemType itemType);
+    virtual bool insertFirst(BaseItem *item);
+    virtual BaseItem *get(ItemType itemType);
     virtual string toString() const;
 };
 
-class BaseOpponent;
+class BaseOpponent
+{
+public:
+    int baseDamage;
+    int levelO;
+    BaseOpponent(int i, int event_id);
+};
 
-enum KnightType { PALADIN = 0, LANCELOT, DRAGON, NORMAL };
-class BaseKnight {
+enum KnightType
+{
+    PALADIN = 0,
+    LANCELOT,
+    DRAGON,
+    NORMAL
+};
+class BaseKnight
+{
 protected:
     int id;
     int hp;
@@ -25,22 +46,37 @@ protected:
     int level;
     int gil;
     int antidote;
-    BaseBag * bag;
+    int phoenixdownI;
+    BaseBag *bag;
     KnightType knightType;
 
 public:
-    static BaseKnight * create(int id, int maxhp, int level, int gil, int antidote, int phoenixdownI);
+    static BaseKnight *create(int id, int maxhp, int level, int gil, int antidote, int phoenixdownI)
+    {
+        BaseKnight *k;
+        k->id = id;
+        k->maxhp = maxhp;
+        k->level = level;
+        k->gil = gil;
+        k->antidote = antidote;
+        k->phoenixdownI = phoenixdownI;
+    };
     string toString() const;
 };
 
-class ArmyKnights {
+class ArmyKnights
+{
+private:
+    static int total_knights;
+    BaseKnight *array_knights;
+
 public:
-    ArmyKnights (const string & file_armyknights);
+    ArmyKnights(const string &file_armyknights);
     ~ArmyKnights();
-    bool fight(BaseOpponent * opponent);
-    bool adventure (Events * events);
+    bool fight(BaseOpponent *opponent);
+    bool adventure(Events *events);
     int count() const;
-    BaseKnight * lastKnight() const;
+    BaseKnight *lastKnight() const;
 
     bool hasPaladinShield() const;
     bool hasLancelotSpear() const;
@@ -51,22 +87,29 @@ public:
     void printResult(bool win) const;
 };
 
-class BaseItem {
+class BaseItem
+{
 public:
-    virtual bool canUse ( BaseKnight * knight ) = 0;
-    virtual void use ( BaseKnight * knight ) = 0;
+    virtual bool canUse(BaseKnight *knight) = 0;
+    virtual void use(BaseKnight *knight) = 0;
 };
+class Events
+{
+private:
+    int total_events = 0;
+    int *data;
 
-class Events {
 public:
+    Events(const string file_events);
     int count() const;
     int get(int i) const;
 };
 
-class KnightAdventure {
+class KnightAdventure
+{
 private:
-    ArmyKnights * armyKnights;
-    Events * events;
+    ArmyKnights *armyKnights;
+    Events *events;
 
 public:
     KnightAdventure();
