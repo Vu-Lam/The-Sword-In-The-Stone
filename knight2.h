@@ -47,6 +47,7 @@ protected:
     int gil;
     int antidote;
     int phoenixdownI;
+    bool isPoisoned;
     BaseBag *bag;
     KnightType knightType;
 
@@ -63,7 +64,14 @@ public:
     };
     string toString() const;
 };
-
+class PALADIN : public BaseKnight
+{
+public:
+    void fight(int i, int e)
+    {
+        // TODO ?
+    }
+};
 class ArmyKnights
 {
 private:
@@ -119,5 +127,9 @@ public:
     void loadEvents(const string &);
     void run();
 };
-
+// Fuction
+bool isPrime(int n);
+bool isLancelot(int maxhp);
+bool isPaladin(int maxhp);
+bool isDragon(int maxhp);
 #endif // __KNIGHT2_H__

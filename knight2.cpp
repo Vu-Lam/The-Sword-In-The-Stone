@@ -87,3 +87,37 @@ KnightAdventure::KnightAdventure()
 }
 
 /* * * END implementation of class KnightAdventure * * */
+// Function
+bool isPrime(int n)
+{
+    if (n < 2)
+        return false;
+    if (n == 2 || n == 3)
+        return true;
+    for (int i = 2; i < n; i++)
+    {
+        if (n % i == 0)
+            return false;
+    }
+    return true;
+}
+bool isLancelot(int maxhp)
+{
+    return maxhp == 888 ? true : false;
+}
+bool isPaladin(int maxhp)
+{
+    return isPrime(maxhp);
+}
+bool isDragon(int maxhp)
+{
+    if (maxhp < 100 || maxhp > 999)
+        return false;
+    int a = maxhp % 10;
+    int b = maxhp % 100 / 10;
+    int c = maxhp / 100;
+    if (a * a == b * b + c * c || b * b == a * a + c * c || c * c == b * b + a * a)
+        return true;
+    else
+        return false;
+}
