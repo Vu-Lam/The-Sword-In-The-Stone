@@ -115,28 +115,8 @@ public:
     int getAntidote() const;
     void setAntidote(int x) { antidote = x; }
     void setIsPoisoned(bool x) { is_poisoned = x;}
-    int getPhoenixDownI() const;
-    void setPhoenixDownI(int x) { phoenixdownI = x; }
     BaseBag* getBag() const {return bag;}
     void setBag (BaseBag *x) {bag = x;}
-};
-class Lancelot : public BaseKnight
-{
-public:
-    static Lancelot *create(int id, int max_hp, int level, int gil, int antidote, int phoenixdownI)
-    {
-        auto *k = new Lancelot();
-        k->id = id;
-        k->max_hp = max_hp;
-        k->hp = max_hp;
-        k->level = level;
-        k->gil = gil;
-        k->antidote = antidote;
-        k->phoenixdownI = phoenixdownI;
-        k->is_poisoned = false;
-        k->type = LANCELOT;
-        return k;
-    };
 };
 class ArmyKnights
 {
@@ -149,7 +129,6 @@ public:
     ~ArmyKnights();
     int count() const;
     bool fight(BaseOpponent *opponent) const;
-    bool adventure(Events *events);
     BaseKnight *lastKnight() const;
     BaseKnight *getKnightAt(int iD) const;
     void deleteLastKnight();
@@ -293,6 +272,7 @@ private:
     Events *events;
     bool metOmegaWeapon;
     bool metHades;
+    bool metUltimecia;
 public:
     KnightAdventure();
     ~KnightAdventure(); // TODO:
@@ -304,6 +284,8 @@ public:
     bool metOmega() const {return metOmegaWeapon;}
     void setMetHades(bool x) {metHades = x;}
     bool met_Hades() const {return metHades;}
+    void setMetUtimecia(bool x) {metUltimecia = x;}
+    bool metUtimecia() const {return metUltimecia;}
     ArmyKnights* getArmy() const {return armyKnights;}
     void utilizePhoenix();
     bool fightUltimecia();

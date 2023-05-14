@@ -2,7 +2,8 @@
 /* * * BEGIN implementation of class Events * * */
 Events::Events(const string& file_events)
 {
-    fstream fin(file_events);
+    ifstream fin(file_events);
+    if(!fin.is_open()) cout << "File events not found\n";
     fin >> total_events;
     int *arr_events = new int[total_events];
     for (int i = 0; i < total_events; i++)
@@ -10,6 +11,7 @@ Events::Events(const string& file_events)
         fin >> arr_events[i];
     }
     data = arr_events;
+    fin.close();
 }
 int Events::count() const { return total_events; }
 int Events::get(int i) const { return data[i]; }
@@ -19,7 +21,6 @@ Events::~Events() { delete[] data; }
 
 /* * * BEGIN implementation of class BaseOpponent * * */
 BaseOpponent::BaseOpponent(int i, int event_id) { levelO = (i + event_id) % 10 + 1; gil = 0; baseDamage=0;}
-
 /* * * END implementation of class BaseOpponent * * */
 
 
@@ -89,11 +90,8 @@ BaseBag::BaseBag(BaseKnight *k, int phoenixdownI, int antidote) {
             }
             else
             {
-                BaseItem *j = head;
-                while (j->next != nullptr)
-                    j = j->next;
-                j->next = temp;
-                j->next->setType(ANTIDOTE);
+                temp->next = head;
+                head = temp;
             }
             ++totalI;
         }
@@ -128,7 +126,6 @@ BaseItem* BaseBag::get(ItemType itemType) {
     BaseItem *i = head;
     while (i->getType() != itemType)
         i = i->next;
-//    cout << "Address found: \t" << i << "\tData found: " << i->type << endl;
     BaseItem *result = i;
     ItemType c = head->getType();
     head->setType(i->getType());
@@ -142,7 +139,7 @@ BaseItem* BaseBag::get(ItemType itemType) {
 string BaseBag::toString() const {
     string s = "Bag[count=" + to_string(totalI) + ";";
     BaseItem *temp = head;
-    if(temp == nullptr) return "Bag[count=0]";
+    if(temp == nullptr) return "Bag[count=0;]";
     while (temp != nullptr)
     {
         string type = (temp->type == ANTIDOTE) ? "Antidote" : (temp->type == PHOENIXDOWNI) ? "PhoenixI"
@@ -158,8 +155,7 @@ string BaseBag::toString() const {
 void BaseBag::useItem(ItemType t) {
     if(head == nullptr) return;
     --totalI;
-    BaseItem *temp = this->get(t);
-    BaseItem *thuoc;
+    BaseItem *thuoc = this->get(t);
     if (t == PHOENIXDOWNI) {
         thuoc = new PhoenixDownI(PHOENIXDOWNI);
     }
@@ -222,14 +218,13 @@ BaseKnight* BaseKnight:: create(int id, int max_hp, int level, int gil, int anti
 string BaseKnight::toString()
 {
     string typeString[4] = {"PALADIN", "LANCELOT", "DRAGON", "NORMAL"};
-    string s1 = "[Knight:id:" + to_string(id) + ",hp:" + to_string(hp) + ",maxhp:" + to_string(max_hp) + ",level:" + to_string(level) + ",gil:" + to_string(gil) + "," + bag->toString() + ",knight_type:" + typeString[type] + "]\n";
+    string s1 = "[Knight:id:" + to_string(id) + ",hp:" + to_string(hp) + ",maxhp:" + to_string(max_hp) + ",level:" + to_string(level) + ",gil:" + to_string(gil) + "," + bag->toString() + ",knight_type:" + typeString[type] + "]";
     return s1;
 }
 int BaseKnight::getMaxHP() const { return max_hp; }
 int BaseKnight::getHP() const { return hp; }
 bool BaseKnight::isPoisoned() const { return is_poisoned; }
 int BaseKnight::getAntidote() const{ return antidote; }
-int BaseKnight::getPhoenixDownI() const {return phoenixdownI;}
 /* * * END implementation of class BaseKnight * * */
 
 
@@ -237,7 +232,8 @@ int BaseKnight::getPhoenixDownI() const {return phoenixdownI;}
 ArmyKnights::ArmyKnights(const string &file_armyknights)
 {
     PaladinShield = false; LancelotSpear = false; GuinevereHair = false; ExcaliburSword = false;
-    fstream fin(file_armyknights);
+    ifstream fin(file_armyknights);
+    if(!fin.is_open()) cout << "File armyknights not found\n";
     fin >> total_knights;
     auto **k = new BaseKnight *[total_knights];
     for (int i = 0; i < total_knights; i++)
@@ -259,6 +255,7 @@ ArmyKnights::ArmyKnights(const string &file_armyknights)
         k[i]->setBag(new BaseBag(k[i], phoenixdownI, antidote));
     }
     array_knights = k;
+    fin.close();
 }
 ArmyKnights::~ArmyKnights() {
     for(int i = 0; i < total_knights; i++) delete array_knights[i];
@@ -272,7 +269,7 @@ BaseKnight* ArmyKnights::getKnightAt(int iD) const {
     return array_knights[iD-1];
 }
 bool ArmyKnights::fight(BaseOpponent *opponent) const {
-    return lastKnight()->getLevel() > opponent->getLevelO();
+    return lastKnight()->getLevel() >= opponent->getLevelO();
 }
 void ArmyKnights::deleteLastKnight() {
     delete array_knights[total_knights-1];
@@ -307,12 +304,13 @@ void ArmyKnights::printResult(bool win)
 /* * * BEGIN implementation of class KnightAdventure * * */
 KnightAdventure::KnightAdventure()
 {
-    metHades = false; metOmegaWeapon = false;
+    metHades = false; metOmegaWeapon = false; metUltimecia = false;
     armyKnights = nullptr;
     events = nullptr;
 }
 void KnightAdventure::loadArmyKnights(const std::string& filein) {
     armyKnights = new ArmyKnights(filein);
+
 }
 void KnightAdventure::loadEvents(const std::string & filein) {
     events = new Events(filein);
@@ -333,7 +331,7 @@ void KnightAdventure::utilizePhoenix() {
     } else armyKnights->deleteLastKnight();
 }
 bool KnightAdventure::fightUltimecia() {
-    cout << "Have 3 item\n";
+//    cout << "Have 3 item\n";
     double UltimeciaHP = 5000;
     // combat
     int idToFight = armyKnights->count();
@@ -406,12 +404,14 @@ void KnightAdventure::run() {
 //                cout << "Win doi thu co dame: " << gau->baseDamageO() << endl;
             }
             else {
+//                cout << armyKnights->lastKnight()->getLevel() << gau->getLevelO();
 //                cout << "Lose doi thu co dame: " << gau->baseDamageO();
                 int newHP = armyKnights->lastKnight()->getHP();
                 newHP -= gau->baseDamageO() * (gau->getLevelO() - armyKnights->lastKnight()->getLevel());
 //                cout << " \t newHP: " << newHP << endl;
                 if (newHP > 0) armyKnights->lastKnight()->setHP(newHP);
                 if (newHP <= 0) {
+                    armyKnights->lastKnight()->setHP(newHP);
                     this->utilizePhoenix();
                 }
             }
@@ -422,6 +422,7 @@ void KnightAdventure::run() {
                 int newLevel = armyKnights->lastKnight()->getLevel();
                 newLevel++;
                 newLevel = newLevel > 10 ? 10 : newLevel;
+                armyKnights->lastKnight()->setLevel(newLevel);
             }
             else {
 //                cout << "Lose Tornbery\n";
@@ -482,7 +483,7 @@ void KnightAdventure::run() {
             armyKnights->lastKnight()->setHP(armyKnights->lastKnight()->getMaxHP());
         }
         else if (events->get(i) == 10) {
-            if(this->metOmega()) continue;
+            if(this->metOmega()) {armyKnights->printInfo(); continue;}
             if((armyKnights->lastKnight()->getLevel() == 10 && armyKnights->lastKnight()->getHP()==armyKnights->lastKnight()->getMaxHP())||(armyKnights->lastKnight()->getType()==DRAGON)) {
                 armyKnights->lastKnight()->setLevel(10);
                 armyKnights->lastKnight()->setGil(999);
@@ -494,7 +495,7 @@ void KnightAdventure::run() {
             setMetOmega(true);
         }
         else if (events->get(i) == 11) {
-            if(this->met_Hades()) continue;
+            if(this->met_Hades()) {armyKnights->printInfo(); continue;}
             if((armyKnights->lastKnight()->getLevel() == 10) || (armyKnights->lastKnight()->getType() == PALADIN && armyKnights->lastKnight()->getLevel() > 8)) {
                 armyKnights->setPaladinShield(true);
             } else {
@@ -505,10 +506,14 @@ void KnightAdventure::run() {
             setMetHades(true);
         }
         else if (events->get(i) == 99) {
+            this->setMetUtimecia(true);
             bool winUltimecia = armyKnights->hasExcaliburSword();
             bool has3Item = armyKnights->hasGuinevereHair() && armyKnights->hasPaladinShield() &&
                             armyKnights->hasLancelotSpear();
-            if (winUltimecia) continue;
+            if (winUltimecia) {
+                armyKnights->printInfo();
+                continue;
+            }
             if (!has3Item) {
                 // Lose cus dont have enough item => delete all knight
                 int totalKnight = armyKnights->count();
@@ -544,12 +549,12 @@ void KnightAdventure::run() {
         }
         armyKnights->printInfo();
     }
-    bool win = armyKnights->count() && armyKnights->hasExcaliburSword();
+    bool win = armyKnights->count() && armyKnights->hasExcaliburSword() && this->metUtimecia();
     armyKnights->printResult(win);
 }
 KnightAdventure::~KnightAdventure() {
-    delete [] armyKnights;
-    delete [] events;
+    delete  armyKnights;
+    delete  events;
 }
 /* * * END implementation of class KnightAdventure * * */
 // Function
