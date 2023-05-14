@@ -506,7 +506,7 @@ void KnightAdventure::run() {
         }
         else if (events->get(i) == 11) {
             if(this->met_Hades()) {armyKnights->printInfo(); continue;}
-            if((armyKnights->lastKnight()->getLevel() == 10) || (armyKnights->lastKnight()->getType() == PALADIN && armyKnights->lastKnight()->getLevel() > 8)) {
+            if((armyKnights->lastKnight()->getLevel() == 10) || (armyKnights->lastKnight()->getType() == PALADIN && armyKnights->lastKnight()->getLevel() >= 8)) {
                 armyKnights->setPaladinShield(true);
             } else {
                 armyKnights->lastKnight()->setHP(0);
@@ -588,12 +588,15 @@ bool isLancelot(int maxhp){
 bool isPaladin(int maxhp){
     return isPrime(maxhp);
 }
-bool isDragon(int maxhp){
+bool isDragon(int maxhp)
+{
     if (maxhp < 100 || maxhp > 999)
         return false;
     int a = maxhp % 10;
     int b = maxhp % 100 / 10;
     int c = maxhp / 100;
+    if (a == 0 || b == 0 || c == 0)
+        return false;
     if (a * a == b * b + c * c || b * b == a * a + c * c || c * c == b * b + a * a)
         return true;
     else
