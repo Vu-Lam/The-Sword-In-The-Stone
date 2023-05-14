@@ -150,6 +150,7 @@ public:
     bool fight(BaseOpponent *opponent) const;
     bool adventure(Events *events);
     BaseKnight *lastKnight() const;
+    BaseKnight *getKnightAt(int iD) const;
     void deleteLastKnight();
     bool hasPaladinShield() const;
     bool hasLancelotSpear() const;
@@ -192,7 +193,7 @@ public:
     ItemType getType()  { return type; }
     void setType(ItemType x)  { type = x; }
     bool canUse(BaseKnight *knight)  { return knight->isPoisoned(); }
-    void use(BaseKnight *knight)  { knight->setIsPoisoned(false); }
+    void use(BaseKnight *knight);
     void getInfo()
     {
         cout << "\n----------------item info--------------\n";
@@ -207,7 +208,7 @@ public:
     ItemType getType()  { return type; }
     void setType(ItemType x)  { type = x; }
     bool canUse(BaseKnight *knight)  { return knight->getHP() < 0; }
-    void use(BaseKnight *knight)  { knight->setHP(knight->getMaxHP()); }
+    void use(BaseKnight *knight);
     void getInfo()
     {
         cout << "\n----------------item info--------------\n";
@@ -221,8 +222,8 @@ public:
     explicit PhoenixDownII(ItemType t);
     ItemType getType()  { return type; }
     void setType(ItemType x)  { type = x; }
-    bool canUse(BaseKnight *knight)  { return knight->getHP() < (knight->getMaxHP()/4); }
-    void use(BaseKnight *knight)  { knight->setHP(knight->getMaxHP()); }
+    bool canUse(BaseKnight *knight);
+    void use(BaseKnight *knight);
     void getInfo()
     {
         cout << "\n----------------item info--------------\n";
@@ -236,7 +237,7 @@ public:
     explicit PhoenixDownIII(ItemType t);
     ItemType getType()  { return type; }
     void setType(ItemType x)  { type = x; }
-    bool canUse(BaseKnight *knight)  { return knight->getHP() < (knight->getMaxHP()/3); }
+    bool canUse(BaseKnight *knight);
     void use(BaseKnight *knight);
     void getInfo()
     {
@@ -271,10 +272,13 @@ public:
     BaseItem *getHead() { return head; }
     virtual bool insertFirst(BaseItem *item);
     bool canBeAdd(ItemType t);
+    int getToTalItem() const {return totalI;}
     virtual BaseItem *get(ItemType itemType);
     virtual string toString() const;
     void useItem(ItemType t);
     bool hasPhoenixDown();
+    bool hasAntidote();
+    void deleteFistItem();
 };
 
 class KnightAdventure
@@ -289,6 +293,7 @@ public:
 
     void loadArmyKnights(const string& filein);
     void loadEvents(const string & filein);
+    void pushGilToArmy(int x);
     ArmyKnights* getArmy() const {return armyKnights;}
     void run();
 };

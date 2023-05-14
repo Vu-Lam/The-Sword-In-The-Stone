@@ -25,8 +25,12 @@ BaseOpponent::BaseOpponent(int i, int event_id) { levelO = (i + event_id) % 10 +
 
 /* * * BEGIN implementation of class Item * * */
 Antidote::Antidote(ItemType t) : BaseItem(t) { type = ANTIDOTE; }
+void Antidote::use(BaseKnight *knight) { knight->setIsPoisoned(false); knight->setAntidote(knight->getAntidote()-1);}
 PhoenixDownI::PhoenixDownI(ItemType t) : BaseItem(t){ type = PHOENIXDOWNI;}
+void PhoenixDownI::use(BaseKnight *knight) { knight->setHP(knight->getMaxHP()); }
 PhoenixDownII::PhoenixDownII(ItemType t) : BaseItem(t) {type = PHOENIXDOWNII;}
+bool PhoenixDownII::canUse(BaseKnight *knight) { return knight->getHP() < (knight->getMaxHP()/4); }
+void PhoenixDownII::use(BaseKnight *knight) { knight->setHP(knight->getMaxHP()); }
 PhoenixDownIII::PhoenixDownIII(ItemType t) : BaseItem(t){type = PHOENIXDOWNIII;}
 void PhoenixDownIII::use(BaseKnight *knight) {
     if(knight->getHP()<1) knight->setHP(knight->getMaxHP()/3);
@@ -35,6 +39,7 @@ void PhoenixDownIII::use(BaseKnight *knight) {
         knight->setHP(newHP);
     }
 }
+bool PhoenixDownIII::canUse(BaseKnight *knight) { return knight->getHP() < (knight->getMaxHP()/3); }
 PhoenixDownIV::PhoenixDownIV(ItemType t) : BaseItem(t){type = PHOENIXDOWNIV;}
 void PhoenixDownIV::use(BaseKnight *knight) {
     if(knight->getHP()<1) knight->setHP(knight->getMaxHP()/2);
@@ -123,7 +128,7 @@ BaseItem* BaseBag::get(ItemType itemType) {
     BaseItem *i = head;
     while (i->getType() != itemType)
         i = i->next;
-    cout << "Address found: \t" << i << "\tData found: " << i->type << endl;
+//    cout << "Address found: \t" << i << "\tData found: " << i->type << endl;
     BaseItem *result = i;
     ItemType c = head->getType();
     head->setType(i->getType());
@@ -180,6 +185,24 @@ bool BaseBag::hasPhoenixDown() {
         temp = temp->next;
     }
     return false;
+}
+bool BaseBag::hasAntidote() {
+    if(head == nullptr) return false;
+    BaseItem *temp = head;
+    while(temp != nullptr) {
+        if(temp->type==ANTIDOTE) return true;
+        temp = temp->next;
+    }
+    return false;
+}
+void BaseBag::deleteFistItem() {
+    if(totalI < 3) {
+        head = nullptr; return;
+    }
+    BaseItem *temp = head;
+    head = head->next;
+    delete temp;
+    totalI--;
 }
 /* * * END implementation of class BaseBag * * */
 
@@ -244,6 +267,9 @@ int ArmyKnights::count() const {return total_knights;}
 BaseKnight* ArmyKnights::lastKnight() const {
     return array_knights[total_knights-1];
 }
+BaseKnight* ArmyKnights::getKnightAt(int iD) const {
+    return array_knights[iD-1];
+}
 bool ArmyKnights::fight(BaseOpponent *opponent) const {
     return lastKnight()->getLevel() > opponent->getLevelO();
 }
@@ -289,51 +315,129 @@ void KnightAdventure::loadArmyKnights(const std::string& filein) {
 void KnightAdventure::loadEvents(const std::string & filein) {
     events = new Events(filein);
 }
+void KnightAdventure::pushGilToArmy(int x) {
+    int gilToPush = x;
+    int idToPush = armyKnights->count();
+    while(gilToPush>0) {
+        int newGilOfKnight = armyKnights->getKnightAt(idToPush)->getGil() + gilToPush;
+        if(newGilOfKnight > 999) {
+            gilToPush = newGilOfKnight-999;
+            newGilOfKnight = 999;
+        }
+        else {
+            gilToPush = 0;
+        }
+        armyKnights->getKnightAt(idToPush)->setGil(newGilOfKnight);
+        --idToPush;
+    }
+}
 void KnightAdventure::run() {
-    for(int i = 0 ; i < events->count(); i++) {
-        if(events->get(i) <6) {
+    for (int i = 0; i < events->count(); i++) {
+        if (events->get(i) < 6) {
             BaseOpponent *gau = nullptr;
-            if(events->get(i) == 1)
-                gau = new MadBear(i,events->get(i));
-            if(events->get(i) == 2)
-                gau = new Bandit(i,events->get(i));
-            if(events->get(i) == 3)
-                gau = new LordLupin(i,events->get(i));
-            if(events->get(i) == 4)
-                gau = new Elf(i,events->get(i));
-            if(events->get(i) == 5)
-                gau = new Troll(i,events->get(i));
-            if(armyKnights->fight(gau)){
-                int newGil =  armyKnights->lastKnight()->getGil();
-                newGil+=gau->gilO();
+            if (events->get(i) == 1)
+                gau = new MadBear(i, events->get(i));
+            if (events->get(i) == 2)
+                gau = new Bandit(i, events->get(i));
+            if (events->get(i) == 3)
+                gau = new LordLupin(i, events->get(i));
+            if (events->get(i) == 4)
+                gau = new Elf(i, events->get(i));
+            if (events->get(i) == 5)
+                gau = new Troll(i, events->get(i));
+            if (armyKnights->fight(gau) || armyKnights->lastKnight()->getType()==LANCELOT) {
+                int newGil = armyKnights->lastKnight()->getGil();
+                newGil += gau->gilO();
                 newGil = newGil > 999 ? 999 : newGil;
                 armyKnights->lastKnight()->setGil(newGil);
-                cout << "Win doi thu co dame: " << gau->baseDamageO() << endl;
-                cout << armyKnights->lastKnight()->toString();
+//                cout << "Win doi thu co dame: " << gau->baseDamageO() << endl;
             }
             else {
-                cout << "Lose doi thu co dame: " << gau->baseDamageO();
+//                cout << "Lose doi thu co dame: " << gau->baseDamageO();
                 int newHP = armyKnights->lastKnight()->getHP();
-                newHP -= gau->baseDamageO()*(gau->getLevelO()-armyKnights->lastKnight()->getLevel());
-                cout << " \t newHP: " << newHP << endl;
-                if(newHP > 0) armyKnights->lastKnight()->setHP(newHP);
-                if(newHP <= 0) {
-                    if(armyKnights->lastKnight()->getBag()->hasPhoenixDown()) {                //Step 1 => find phoenixdown
+                newHP -= gau->baseDamageO() * (gau->getLevelO() - armyKnights->lastKnight()->getLevel());
+//                cout << " \t newHP: " << newHP << endl;
+                if (newHP > 0) armyKnights->lastKnight()->setHP(newHP);
+                if (newHP <= 0) {
+                    if (armyKnights->lastKnight()->getBag()->hasPhoenixDown()) {                //Step 1 => find phoenixdown
 //                        cout << "Call step 1\n";
-                        BaseItem * temp = armyKnights->lastKnight()->getBag()->getHead();
-                        while(temp->type==ANTIDOTE) temp = temp->next;
-                        if(temp->canUse(armyKnights->lastKnight())) armyKnights->lastKnight()->getBag()->useItem(temp->type);
+                        BaseItem *temp = armyKnights->lastKnight()->getBag()->getHead();
+                        while (temp->type == ANTIDOTE) temp = temp->next;
+                        if (temp->canUse(armyKnights->lastKnight()))
+                            armyKnights->lastKnight()->getBag()->useItem(temp->type);
                     }
                         //Step 2 => call phoenix
                     else if (armyKnights->lastKnight()->getGil() >= 100) {
                         int newGil = armyKnights->lastKnight()->getGil() - 100;
                         armyKnights->lastKnight()->setGil(newGil);
-                        armyKnights->lastKnight()->setHP(armyKnights->lastKnight()->getMaxHP()/2);
-                    }
-                    else armyKnights->deleteLastKnight();
+                        armyKnights->lastKnight()->setHP(armyKnights->lastKnight()->getMaxHP() / 2);
+                    } else armyKnights->deleteLastKnight();
                 }
 
-                cout << armyKnights->lastKnight()->toString();
+            }
+            armyKnights->printInfo();
+        }
+        else if (events->get(i) == 6) {
+            auto *Tornbery = new BaseOpponent(i, events->get(i));
+            if (armyKnights->fight(Tornbery)) {
+                int newLevel = armyKnights->lastKnight()->getLevel();
+                newLevel++;
+                newLevel = newLevel > 10 ? 10 : newLevel;
+            }
+            else {
+//                cout << "Lose Tornbery\n";
+                if (armyKnights->lastKnight()->getType() == DRAGON) {
+//                    cout << "After event 6: ";
+                    armyKnights->printInfo();
+                    continue;
+                }
+//                cout << "Lose Tornbery but is not Dragon\n";
+                armyKnights->lastKnight()->setIsPoisoned(true);
+                if (armyKnights->lastKnight()->getBag()->hasAntidote()) {
+                    armyKnights->lastKnight()->getBag()->useItem(ANTIDOTE);
+                }
+                else {
+                    //Trung doc
+                    for (int j = 0; j < 3; j++) {
+                        armyKnights->lastKnight()->getBag()->deleteFistItem();
+                    }
+                    int newHP = armyKnights->lastKnight()->getHP();
+                    newHP -= 10;
+                    if (newHP > 0) armyKnights->lastKnight()->setHP(newHP);
+                    if (newHP <= 0) {
+                        if (armyKnights->lastKnight()->getBag()->hasPhoenixDown()) {
+                            //Step 1 => find phoenixdown
+                            BaseItem *temp = armyKnights->lastKnight()->getBag()->getHead();
+                            while (temp->type == ANTIDOTE) temp = temp->next;
+                            if (temp->canUse(armyKnights->lastKnight()))
+                                armyKnights->lastKnight()->getBag()->useItem(temp->type);
+                        }
+                            //Step 2 => call phoenix
+                        else if (armyKnights->lastKnight()->getGil() >= 100) {
+                            int newGil = armyKnights->lastKnight()->getGil() - 100;
+                            armyKnights->lastKnight()->setGil(newGil);
+                            armyKnights->lastKnight()->setHP(armyKnights->lastKnight()->getMaxHP() / 2);
+                        } else armyKnights->deleteLastKnight();
+                    }
+
+                }
+            }
+            armyKnights->printInfo();
+        }
+        else if (events->get(i) == 7) {
+            auto *Queen = new BaseOpponent(i,events->get(i));
+            if(armyKnights->fight(Queen)) {
+                int newGilOfLastKnight = armyKnights->lastKnight()->getGil()*2;
+                if(newGilOfLastKnight>999) {
+                    int gillToPush = newGilOfLastKnight-999;
+                    newGilOfLastKnight = 999;
+                    pushGilToArmy(gillToPush);
+                }
+                armyKnights->lastKnight()->setGil(newGilOfLastKnight);
+            }
+            else {
+                int newGilOfLastKnight = armyKnights->lastKnight()->getGil() / 2 ;
+                armyKnights->lastKnight()->setGil(newGilOfLastKnight);
             }
         }
     }
@@ -344,8 +448,7 @@ KnightAdventure::~KnightAdventure() {
 }
 /* * * END implementation of class KnightAdventure * * */
 // Function
-bool isPrime(int n)
-{
+bool isPrime(int n) {
     if (n < 2)
         return false;
     if (n == 2 || n == 3)
@@ -357,16 +460,13 @@ bool isPrime(int n)
     }
     return true;
 }
-bool isLancelot(int maxhp)
-{
+bool isLancelot(int maxhp){
     return maxhp == 888;
 }
-bool isPaladin(int maxhp)
-{
+bool isPaladin(int maxhp){
     return isPrime(maxhp);
 }
-bool isDragon(int maxhp)
-{
+bool isDragon(int maxhp){
     if (maxhp < 100 || maxhp > 999)
         return false;
     int a = maxhp % 10;
