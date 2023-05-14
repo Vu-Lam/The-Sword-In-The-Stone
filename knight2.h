@@ -104,6 +104,7 @@ public:
     string toString() ;
     int getMaxHP() const ;
     int getHP() const;
+    void setLevel(int x) {level = x;}
     void setHP(int x) {hp = x;}
     void setGil(int x) {gil = x;}
     int getGil() const{return gil;}
@@ -142,7 +143,7 @@ class ArmyKnights
 private:
     int total_knights{};
     BaseKnight **array_knights;
-
+    bool PaladinShield, LancelotSpear, GuinevereHair,ExcaliburSword;
 public:
     explicit ArmyKnights(const string &file_armyknights);
     ~ArmyKnights();
@@ -156,6 +157,10 @@ public:
     bool hasLancelotSpear() const;
     bool hasGuinevereHair() const;
     bool hasExcaliburSword() const;
+    void setPaladinShield(bool x) { PaladinShield = x;}
+    void setLancelotSpear(bool x) {LancelotSpear = x;}
+    void setGuinevereHair(bool x) {GuinevereHair = x;}
+    void setExcaliburSword(bool x) {ExcaliburSword = x;}
     BaseKnight **getArrayKnight() const {return array_knights;}
     void printInfo() const;
     static void printResult(bool win) ;
@@ -286,7 +291,8 @@ class KnightAdventure
 private:
     ArmyKnights *armyKnights;
     Events *events;
-
+    bool metOmegaWeapon;
+    bool metHades;
 public:
     KnightAdventure();
     ~KnightAdventure(); // TODO:
@@ -294,7 +300,14 @@ public:
     void loadArmyKnights(const string& filein);
     void loadEvents(const string & filein);
     void pushGilToArmy(int x);
+    void setMetOmega(bool x) {metOmegaWeapon = x;}
+    bool metOmega() const {return metOmegaWeapon;}
+    void setMetHades(bool x) {metHades = x;}
+    bool met_Hades() const {return metHades;}
     ArmyKnights* getArmy() const {return armyKnights;}
+    void utilizePhoenix();
+    bool fightUltimecia();
+    void pushItemToArmy(BaseItem* i);
     void run();
 };
 // Function

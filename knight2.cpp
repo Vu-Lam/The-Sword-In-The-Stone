@@ -236,6 +236,7 @@ int BaseKnight::getPhoenixDownI() const {return phoenixdownI;}
 /* * * BEGIN implementation of class ArmyKnights * * */
 ArmyKnights::ArmyKnights(const string &file_armyknights)
 {
+    PaladinShield = false; LancelotSpear = false; GuinevereHair = false; ExcaliburSword = false;
     fstream fin(file_armyknights);
     fin >> total_knights;
     auto **k = new BaseKnight *[total_knights];
@@ -277,10 +278,10 @@ void ArmyKnights::deleteLastKnight() {
     delete array_knights[total_knights-1];
     --total_knights;
 }
-bool ArmyKnights::hasExcaliburSword() const {return false;}
-bool ArmyKnights::hasGuinevereHair() const {return false;}
-bool ArmyKnights::hasLancelotSpear() const {return false;}
-bool ArmyKnights::hasPaladinShield() const {return false;}
+bool ArmyKnights::hasExcaliburSword() const {return ExcaliburSword;}
+bool ArmyKnights::hasGuinevereHair() const {return GuinevereHair;}
+bool ArmyKnights::hasLancelotSpear() const {return LancelotSpear;}
+bool ArmyKnights::hasPaladinShield() const {return PaladinShield;}
 void ArmyKnights::printInfo() const
 {
     cout << "No. knights: " << this->count();
@@ -306,6 +307,7 @@ void ArmyKnights::printResult(bool win)
 /* * * BEGIN implementation of class KnightAdventure * * */
 KnightAdventure::KnightAdventure()
 {
+    metHades = false; metOmegaWeapon = false;
     armyKnights = nullptr;
     events = nullptr;
 }
@@ -314,6 +316,41 @@ void KnightAdventure::loadArmyKnights(const std::string& filein) {
 }
 void KnightAdventure::loadEvents(const std::string & filein) {
     events = new Events(filein);
+}
+void KnightAdventure::utilizePhoenix() {
+    if (armyKnights->lastKnight()->getBag()->hasPhoenixDown()) {
+        //Step 1 => find phoenixdown
+        BaseItem *temp = armyKnights->lastKnight()->getBag()->getHead();
+        while (temp->type == ANTIDOTE) temp = temp->next;
+        if (temp->canUse(armyKnights->lastKnight()))
+            armyKnights->lastKnight()->getBag()->useItem(temp->type);
+    }
+        //Step 2 => call phoenix
+    else if (armyKnights->lastKnight()->getGil() >= 100) {
+        int newGil = armyKnights->lastKnight()->getGil() - 100;
+        armyKnights->lastKnight()->setGil(newGil);
+        armyKnights->lastKnight()->setHP(armyKnights->lastKnight()->getMaxHP() / 2);
+    } else armyKnights->deleteLastKnight();
+}
+bool KnightAdventure::fightUltimecia() {
+    cout << "Have 3 item\n";
+    double UltimeciaHP = 5000;
+    // combat
+    int idToFight = armyKnights->count();
+    int totalKnight = armyKnights->count();
+    double knightBaseDamage[3] = {0.06, 0.05, 0.075};
+    // Each knight attack Ultimecia
+    for(int i = 0; i < totalKnight; i++) {
+        if(armyKnights->getKnightAt(idToFight)->getType() != NORMAL) {
+            KnightType t = armyKnights->getKnightAt(idToFight)->getType();
+            int damage = armyKnights->getKnightAt(idToFight)->getHP()*armyKnights->getKnightAt(idToFight)->getLevel()*knightBaseDamage[t];
+            UltimeciaHP-=damage;
+        }
+        if(UltimeciaHP > 0) armyKnights->deleteLastKnight();
+        else break;
+        idToFight--;
+    }
+    return UltimeciaHP<1;
 }
 void KnightAdventure::pushGilToArmy(int x) {
     int gilToPush = x;
@@ -331,8 +368,24 @@ void KnightAdventure::pushGilToArmy(int x) {
         --idToPush;
     }
 }
+void KnightAdventure::pushItemToArmy(BaseItem *i) {
+    int idToPush = armyKnights->count();
+//    cout << "Item type: " << i->getType();
+//    cout << "Call to push item\n";
+    int totalKnight = armyKnights->count();
+    bool added = false;
+    for(int j = 0; j < totalKnight; ++j) {
+        if(armyKnights->getKnightAt(idToPush)->getBag()->canBeAdd(i->type)) {
+            armyKnights->getKnightAt(idToPush)->getBag()->insertFirst(i);
+            added = true;
+        }
+        if (added) break;
+        --idToPush;
+    }
+}
 void KnightAdventure::run() {
     for (int i = 0; i < events->count(); i++) {
+//        cout << "Event: " << events->get(i) << endl;
         if (events->get(i) < 6) {
             BaseOpponent *gau = nullptr;
             if (events->get(i) == 1)
@@ -345,7 +398,7 @@ void KnightAdventure::run() {
                 gau = new Elf(i, events->get(i));
             if (events->get(i) == 5)
                 gau = new Troll(i, events->get(i));
-            if (armyKnights->fight(gau) || armyKnights->lastKnight()->getType()==LANCELOT) {
+            if (armyKnights->fight(gau) || armyKnights->lastKnight()->getType()==LANCELOT || armyKnights->lastKnight()->getType()==PALADIN) {
                 int newGil = armyKnights->lastKnight()->getGil();
                 newGil += gau->gilO();
                 newGil = newGil > 999 ? 999 : newGil;
@@ -359,23 +412,9 @@ void KnightAdventure::run() {
 //                cout << " \t newHP: " << newHP << endl;
                 if (newHP > 0) armyKnights->lastKnight()->setHP(newHP);
                 if (newHP <= 0) {
-                    if (armyKnights->lastKnight()->getBag()->hasPhoenixDown()) {                //Step 1 => find phoenixdown
-//                        cout << "Call step 1\n";
-                        BaseItem *temp = armyKnights->lastKnight()->getBag()->getHead();
-                        while (temp->type == ANTIDOTE) temp = temp->next;
-                        if (temp->canUse(armyKnights->lastKnight()))
-                            armyKnights->lastKnight()->getBag()->useItem(temp->type);
-                    }
-                        //Step 2 => call phoenix
-                    else if (armyKnights->lastKnight()->getGil() >= 100) {
-                        int newGil = armyKnights->lastKnight()->getGil() - 100;
-                        armyKnights->lastKnight()->setGil(newGil);
-                        armyKnights->lastKnight()->setHP(armyKnights->lastKnight()->getMaxHP() / 2);
-                    } else armyKnights->deleteLastKnight();
+                    this->utilizePhoenix();
                 }
-
             }
-            armyKnights->printInfo();
         }
         else if (events->get(i) == 6) {
             auto *Tornbery = new BaseOpponent(i, events->get(i));
@@ -388,7 +427,6 @@ void KnightAdventure::run() {
 //                cout << "Lose Tornbery\n";
                 if (armyKnights->lastKnight()->getType() == DRAGON) {
 //                    cout << "After event 6: ";
-                    armyKnights->printInfo();
                     continue;
                 }
 //                cout << "Lose Tornbery but is not Dragon\n";
@@ -405,24 +443,11 @@ void KnightAdventure::run() {
                     newHP -= 10;
                     if (newHP > 0) armyKnights->lastKnight()->setHP(newHP);
                     if (newHP <= 0) {
-                        if (armyKnights->lastKnight()->getBag()->hasPhoenixDown()) {
-                            //Step 1 => find phoenixdown
-                            BaseItem *temp = armyKnights->lastKnight()->getBag()->getHead();
-                            while (temp->type == ANTIDOTE) temp = temp->next;
-                            if (temp->canUse(armyKnights->lastKnight()))
-                                armyKnights->lastKnight()->getBag()->useItem(temp->type);
-                        }
-                            //Step 2 => call phoenix
-                        else if (armyKnights->lastKnight()->getGil() >= 100) {
-                            int newGil = armyKnights->lastKnight()->getGil() - 100;
-                            armyKnights->lastKnight()->setGil(newGil);
-                            armyKnights->lastKnight()->setHP(armyKnights->lastKnight()->getMaxHP() / 2);
-                        } else armyKnights->deleteLastKnight();
+                        this->utilizePhoenix();
                     }
 
                 }
             }
-            armyKnights->printInfo();
         }
         else if (events->get(i) == 7) {
             auto *Queen = new BaseOpponent(i,events->get(i));
@@ -436,11 +461,91 @@ void KnightAdventure::run() {
                 armyKnights->lastKnight()->setGil(newGilOfLastKnight);
             }
             else {
-                int newGilOfLastKnight = armyKnights->lastKnight()->getGil() / 2 ;
-                armyKnights->lastKnight()->setGil(newGilOfLastKnight);
+                if (armyKnights->lastKnight()->getType() != PALADIN) {
+                    int newGilOfLastKnight = armyKnights->lastKnight()->getGil() / 2;
+                    armyKnights->lastKnight()->setGil(newGilOfLastKnight);
+                }
             }
         }
+        else if (events->get(i) == 8) {
+            if(armyKnights->lastKnight()->getGil() < 50) continue;
+            else {
+                if (armyKnights->lastKnight()->getHP() < armyKnights->lastKnight()->getMaxHP() / 3) {
+                    int newGil = armyKnights->lastKnight()->getGil() - 50;
+                    armyKnights->lastKnight()->setGil(newGil);
+                    int newHP = armyKnights->lastKnight()->getHP() + armyKnights->lastKnight()->getMaxHP() / 5;
+                    armyKnights->lastKnight()->setHP(newHP);
+                }
+            }
+        }
+        else if (events->get(i) == 9) {
+            armyKnights->lastKnight()->setHP(armyKnights->lastKnight()->getMaxHP());
+        }
+        else if (events->get(i) == 10) {
+            if(this->metOmega()) continue;
+            if((armyKnights->lastKnight()->getLevel() == 10 && armyKnights->lastKnight()->getHP()==armyKnights->lastKnight()->getMaxHP())||(armyKnights->lastKnight()->getType()==DRAGON)) {
+                armyKnights->lastKnight()->setLevel(10);
+                armyKnights->lastKnight()->setGil(999);
+            }
+            else {
+                armyKnights->lastKnight()->setHP(0);
+                this->utilizePhoenix();
+            }
+            setMetOmega(true);
+        }
+        else if (events->get(i) == 11) {
+            if(this->met_Hades()) continue;
+            if((armyKnights->lastKnight()->getLevel() == 10) || (armyKnights->lastKnight()->getType() == PALADIN && armyKnights->lastKnight()->getLevel() > 8)) {
+                armyKnights->setPaladinShield(true);
+            } else {
+                armyKnights->lastKnight()->setHP(0);
+                this->utilizePhoenix();
+            }
+            // Have met Hades update
+            setMetHades(true);
+        }
+        else if (events->get(i) == 99) {
+            bool winUltimecia = armyKnights->hasExcaliburSword();
+            bool has3Item = armyKnights->hasGuinevereHair() && armyKnights->hasPaladinShield() &&
+                            armyKnights->hasLancelotSpear();
+            if (winUltimecia) continue;
+            if (!has3Item) {
+                // Lose cus dont have enough item => delete all knight
+                int totalKnight = armyKnights->count();
+                for (int j = 0; j < totalKnight; ++j) {
+                    armyKnights->deleteLastKnight();
+                }
+            } else bool loseUtimecia = this->fightUltimecia();
+        }
+        else if (events->get(i) == 112) {
+            auto * drug = new PhoenixDownII(PHOENIXDOWNII);
+            this->pushItemToArmy(drug);
+        }
+        else if (events->get(i) == 113) {
+            auto * drug = new PhoenixDownIII(PHOENIXDOWNIII);
+            this->pushItemToArmy(drug);
+        }
+        else if (events->get(i) == 114) {
+            auto * drug = new PhoenixDownIV(PHOENIXDOWNIV);
+            this->pushItemToArmy(drug);
+        }
+        else if (events->get(i) == 95) {
+            armyKnights->setPaladinShield(true);
+        }
+        else if (events->get(i) == 96) {
+            armyKnights->setLancelotSpear(true);
+        }
+        else if (events->get(i) == 97) {
+            armyKnights->setGuinevereHair(true);
+        }
+        else if (events->get(i) == 98) {
+            bool has3Item = armyKnights->hasGuinevereHair() && armyKnights->hasPaladinShield() && armyKnights->hasLancelotSpear();
+            armyKnights->setExcaliburSword(has3Item);
+        }
+        armyKnights->printInfo();
     }
+    bool win = armyKnights->count() && armyKnights->hasExcaliburSword();
+    armyKnights->printResult(win);
 }
 KnightAdventure::~KnightAdventure() {
     delete [] armyKnights;
