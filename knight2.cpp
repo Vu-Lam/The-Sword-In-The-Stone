@@ -558,6 +558,8 @@ void KnightAdventure::run() {
             armyKnights->setExcaliburSword(has3Item);
         }
         armyKnights->printInfo();
+        // If there is no knight -> break loop to declare lose!
+        if(!armyKnights->count()) break;
     }
     bool win = armyKnights->count() && armyKnights->hasExcaliburSword() && this->metUtimecia();
     armyKnights->printResult(win);
