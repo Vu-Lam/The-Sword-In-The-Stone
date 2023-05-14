@@ -364,6 +364,7 @@ void KnightAdventure::pushGilToArmy(int x) {
         }
         armyKnights->getKnightAt(idToPush)->setGil(newGilOfKnight);
         --idToPush;
+        if(!idToPush) break;
     }
 }
 void KnightAdventure::pushItemToArmy(BaseItem *i) {
@@ -428,6 +429,7 @@ void KnightAdventure::run() {
 //                cout << "Lose Tornbery\n";
                 if (armyKnights->lastKnight()->getType() == DRAGON) {
 //                    cout << "After event 6: ";
+                    armyKnights->printInfo();
                     continue;
                 }
 //                cout << "Lose Tornbery but is not Dragon\n";
@@ -457,7 +459,7 @@ void KnightAdventure::run() {
                 if(newGilOfLastKnight>999) {
                     int gillToPush = newGilOfLastKnight-999;
                     newGilOfLastKnight = 999;
-                    pushGilToArmy(gillToPush);
+                    this->pushGilToArmy(gillToPush);
                 }
                 armyKnights->lastKnight()->setGil(newGilOfLastKnight);
             }
@@ -469,7 +471,15 @@ void KnightAdventure::run() {
             }
         }
         else if (events->get(i) == 8) {
-            if(armyKnights->lastKnight()->getGil() < 50) continue;
+            if(armyKnights->lastKnight()->getType()==PALADIN) {
+                int plusHP = armyKnights->lastKnight()->getHP() < armyKnights->lastKnight()->getMaxHP()/3 ? armyKnights->lastKnight()->getMaxHP()/5 : 0;
+                int newHP = armyKnights->lastKnight()->getHP() + plusHP;
+                armyKnights->lastKnight()->setHP(newHP);
+            }
+            else if(armyKnights->lastKnight()->getGil() < 50) {
+                armyKnights->printInfo();
+                continue;
+            }
             else {
                 if (armyKnights->lastKnight()->getHP() < armyKnights->lastKnight()->getMaxHP() / 3) {
                     int newGil = armyKnights->lastKnight()->getGil() - 50;
