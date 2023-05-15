@@ -162,12 +162,6 @@ public:
     virtual void setType(ItemType x) { type = x; }
     virtual bool canUse(BaseKnight *knight) = 0;
     virtual void use(BaseKnight *knight) = 0;
-    virtual void getInfo()
-    {
-        cout << "\n----------------item info--------------\n";
-        cout << "Type: " << type << endl;
-        cout << "-----------------------------------------\n";
-    }
     virtual ~BaseItem(){};
 };
 class Antidote : public BaseItem
@@ -286,8 +280,8 @@ public:
     bool met_Hades() const {return metHades;}
     void setMetUtimecia(bool x) {metUltimecia = x;}
     bool metUtimecia() const {return metUltimecia;}
-    ArmyKnights* getArmy() const {return armyKnights;}
     void utilizePhoenix();
+    void findPhoenix();
     bool fightUltimecia();
     void pushItemToArmy(BaseItem* i);
     void run();

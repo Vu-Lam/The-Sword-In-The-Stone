@@ -174,7 +174,7 @@ void BaseBag::useItem(ItemType t) {
     thuoc->use(knight);
 }
 bool BaseBag::hasPhoenixDown() {
-    if(head == nullptr) return false;
+    if(!totalI) return false;
     BaseItem *temp = head;
     while(temp!= nullptr) {
         if(temp->type!=ANTIDOTE) return true;
@@ -324,11 +324,21 @@ void KnightAdventure::utilizePhoenix() {
             armyKnights->lastKnight()->getBag()->useItem(temp->type);
     }
         //Step 2 => call phoenix
-    else if (armyKnights->lastKnight()->getGil() >= 100) {
+    else if (armyKnights->lastKnight()->getHP() < 1 && armyKnights->lastKnight()->getGil() >= 100) {
         int newGil = armyKnights->lastKnight()->getGil() - 100;
         armyKnights->lastKnight()->setGil(newGil);
         armyKnights->lastKnight()->setHP(armyKnights->lastKnight()->getMaxHP() / 2);
-    } else armyKnights->deleteLastKnight();
+    } else if (armyKnights->lastKnight()->getHP() < 1) armyKnights->deleteLastKnight();
+    else return;
+}
+void KnightAdventure::findPhoenix() {
+    if (armyKnights->lastKnight()->getBag()->hasPhoenixDown()) {
+        //Step 1 => find phoenixdown
+        BaseItem *temp = armyKnights->lastKnight()->getBag()->getHead();
+        while (temp->type == ANTIDOTE) temp = temp->next;
+        if (temp->canUse(armyKnights->lastKnight()))
+            armyKnights->lastKnight()->getBag()->useItem(temp->type);
+    }
 }
 bool KnightAdventure::fightUltimecia() {
 //    cout << "Have 3 item\n";
@@ -408,11 +418,12 @@ void KnightAdventure::run() {
 //                cout << armyKnights->lastKnight()->getLevel() << gau->getLevelO();
 //                cout << "Lose doi thu co dame: " << gau->baseDamageO();
                 int newHP = armyKnights->lastKnight()->getHP();
-                newHP -= gau->baseDamageO() * (gau->getLevelO() - armyKnights->lastKnight()->getLevel());
+                int opponentDamage =  gau->baseDamageO() * (gau->getLevelO() - armyKnights->lastKnight()->getLevel());
+                newHP-=opponentDamage;
 //                cout << " \t newHP: " << newHP << endl;
                 if (newHP > 0) armyKnights->lastKnight()->setHP(newHP);
+                this->findPhoenix();
                 if (newHP <= 0) {
-                    armyKnights->lastKnight()->setHP(newHP);
                     this->utilizePhoenix();
                 }
             }
