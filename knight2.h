@@ -122,7 +122,7 @@ public:
 class ArmyKnights
 {
 private:
-    int total_knights{};
+    int total_knights;
     BaseKnight **array_knights;
     bool PaladinShield, LancelotSpear, GuinevereHair,ExcaliburSword;
 public:
