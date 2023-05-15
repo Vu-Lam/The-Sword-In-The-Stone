@@ -8,7 +8,7 @@ class BaseBag;
 class Events
 {
 private:
-    int total_events{};
+    int total_events;
     int *data;
     int tc2049;
 public:

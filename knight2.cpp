@@ -416,7 +416,6 @@ void KnightAdventure::run() {
 //                cout << "Win doi thu co dame: " << gau->baseDamageO() << endl;
             }
             else {
-//                cout << armyKnights->lastKnight()->getLevel() << gau->getLevelO();
 //                cout << "Lose doi thu co dame: " << gau->baseDamageO();
                 int newHP = armyKnights->lastKnight()->getHP();
                 int opponentDamage =  gau->baseDamageO() * (gau->getLevelO() - armyKnights->lastKnight()->getLevel());
