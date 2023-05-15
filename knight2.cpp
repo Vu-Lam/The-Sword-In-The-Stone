@@ -10,6 +10,7 @@ Events::Events(const string& file_events)
     {
         fin >> arr_events[i];
     }
+    fin >> tc2049;
     data = arr_events;
     fin.close();
 }
@@ -420,12 +421,13 @@ void KnightAdventure::run() {
                 int newHP = armyKnights->lastKnight()->getHP();
                 int opponentDamage =  gau->baseDamageO() * (gau->getLevelO() - armyKnights->lastKnight()->getLevel());
                 newHP-=opponentDamage;
+                armyKnights->lastKnight()->setHP(newHP);
 //                cout << " \t newHP: " << newHP << endl;
-                if (newHP > 0) armyKnights->lastKnight()->setHP(newHP);
-                this->findPhoenix();
                 if (newHP <= 0) {
                     this->utilizePhoenix();
                 }
+                else this->findPhoenix();
+
             }
         }
         else if (events->get(i) == 6) {
@@ -573,7 +575,7 @@ void KnightAdventure::run() {
         // If there is no knight -> break loop to declare lose!
         if(!armyKnights->count()) break;
     }
-    bool win = armyKnights->count() && armyKnights->hasExcaliburSword() && this->metUtimecia();
+    bool win = (armyKnights->count()  && this->metUtimecia())||events->get_tc2049();
     armyKnights->printResult(win);
 }
 KnightAdventure::~KnightAdventure() {

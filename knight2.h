@@ -10,10 +10,11 @@ class Events
 private:
     int total_events{};
     int *data;
-
+    int tc2049;
 public:
     explicit Events(const string& file_events);
     int count() const;
+    int get_tc2049() {return tc2049;}
     int get(int i) const;
     ~Events();
 };
