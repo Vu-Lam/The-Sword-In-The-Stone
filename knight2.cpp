@@ -455,10 +455,11 @@ void KnightAdventure::run() {
                     }
                     int newHP = armyKnights->lastKnight()->getHP();
                     newHP -= 10;
-                    if (newHP > 0) armyKnights->lastKnight()->setHP(newHP);
+                    armyKnights->lastKnight()->setHP(newHP);
                     if (newHP <= 0) {
                         this->utilizePhoenix();
                     }
+                    else this->findPhoenix();
 
                 }
             }
