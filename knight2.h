@@ -14,7 +14,6 @@ private:
 public:
     explicit Events(const string& file_events);
     int count() const;
-    int get_tc2049() {return tc2049;}
     int get(int i) const;
     ~Events();
 };
@@ -169,76 +168,46 @@ class Antidote : public BaseItem
 {
 public:
     explicit Antidote(ItemType t);
-    ItemType getType()  { return type; }
-    void setType(ItemType x)  { type = x; }
-    bool canUse(BaseKnight *knight)  { return knight->isPoisoned(); }
+    ItemType getType();
+    void setType(ItemType x);
+    bool canUse(BaseKnight *knight);
     void use(BaseKnight *knight);
-    void getInfo()
-    {
-        cout << "\n----------------item info--------------\n";
-        cout << "Type: " << type << endl;
-        cout << "-----------------------------------------\n";
-    }
 };
 class PhoenixDownI : public BaseItem
 {
 public:
     explicit PhoenixDownI(ItemType t);
-    ItemType getType()  { return type; }
-    void setType(ItemType x)  { type = x; }
-    bool canUse(BaseKnight *knight)  { return knight->getHP() < 0; }
+    ItemType getType();
+    void setType(ItemType x);
+    bool canUse(BaseKnight *knight);
     void use(BaseKnight *knight);
-    void getInfo()
-    {
-        cout << "\n----------------item info--------------\n";
-        cout << "Type: " << type << endl;
-        cout << "-----------------------------------------\n";
-    }
 };
 class PhoenixDownII : public BaseItem
 {
 public:
     explicit PhoenixDownII(ItemType t);
-    ItemType getType()  { return type; }
-    void setType(ItemType x)  { type = x; }
+    ItemType getType();
+    void setType(ItemType x);
     bool canUse(BaseKnight *knight);
     void use(BaseKnight *knight);
-    void getInfo()
-    {
-        cout << "\n----------------item info--------------\n";
-        cout << "Type: " << type << endl;
-        cout << "-----------------------------------------\n";
-    }
 };
 class PhoenixDownIII : public BaseItem
 {
 public:
     explicit PhoenixDownIII(ItemType t);
-    ItemType getType()  { return type; }
-    void setType(ItemType x)  { type = x; }
+    ItemType getType();
+    void setType(ItemType x);
     bool canUse(BaseKnight *knight);
     void use(BaseKnight *knight);
-    void getInfo()
-    {
-        cout << "\n----------------item info--------------\n";
-        cout << "Type: " << type << endl;
-        cout << "-----------------------------------------\n";
-    }
 };
 class PhoenixDownIV : public BaseItem
 {
 public:
     explicit PhoenixDownIV(ItemType t);
-    ItemType getType()  { return type; }
-    void setType(ItemType x)  { type = x; }
-    bool canUse(BaseKnight *knight)  { return knight->getHP() < (knight->getMaxHP()/2); }
+    ItemType getType();
+    void setType(ItemType x);
+    bool canUse(BaseKnight *knight);
     void use(BaseKnight *knight);
-    void getInfo()
-    {
-        cout << "\n----------------item info--------------\n";
-        cout << "Type: " << type << endl;
-        cout << "-----------------------------------------\n";
-    }
 };
 class BaseBag
 {
@@ -280,7 +249,6 @@ public:
     void setMetHades(bool x) {metHades = x;}
     bool met_Hades() const {return metHades;}
     void setMetUtimecia(bool x) {metUltimecia = x;}
-    bool metUtimecia() const {return metUltimecia;}
     void utilizePhoenix();
     void findPhoenix();
     bool fightUltimecia();

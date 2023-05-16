@@ -28,11 +28,19 @@ BaseOpponent::BaseOpponent(int i, int event_id) { levelO = (i + event_id) % 10 +
 /* * * BEGIN implementation of class Item * * */
 Antidote::Antidote(ItemType t) : BaseItem(t) { type = ANTIDOTE; }
 void Antidote::use(BaseKnight *knight) { knight->setIsPoisoned(false); knight->setAntidote(knight->getAntidote()-1);}
+ItemType Antidote::getType() { return type; }
+void Antidote::setType(ItemType x) { type = x; }
+bool Antidote::canUse(BaseKnight *knight) {return knight->isPoisoned(); }
 PhoenixDownI::PhoenixDownI(ItemType t) : BaseItem(t){ type = PHOENIXDOWNI;}
 void PhoenixDownI::use(BaseKnight *knight) { knight->setHP(knight->getMaxHP()); }
+ItemType PhoenixDownI::getType() { return type; }
+void PhoenixDownI::setType(ItemType x) { type = x; }
+bool PhoenixDownI::canUse(BaseKnight *knight) {return knight->getHP() <= 0; }
 PhoenixDownII::PhoenixDownII(ItemType t) : BaseItem(t) {type = PHOENIXDOWNII;}
-bool PhoenixDownII::canUse(BaseKnight *knight) { return knight->getHP() < (knight->getMaxHP()/4); }
+bool PhoenixDownII::canUse(BaseKnight *knight) {return knight->getHP() < (knight->getMaxHP()/4); }
 void PhoenixDownII::use(BaseKnight *knight) { knight->setHP(knight->getMaxHP()); }
+ItemType PhoenixDownII::getType() { return type; }
+void PhoenixDownII::setType(ItemType x) { type = x; }
 PhoenixDownIII::PhoenixDownIII(ItemType t) : BaseItem(t){type = PHOENIXDOWNIII;}
 void PhoenixDownIII::use(BaseKnight *knight) {
     if(knight->getHP()<1) knight->setHP(knight->getMaxHP()/3);
@@ -41,7 +49,9 @@ void PhoenixDownIII::use(BaseKnight *knight) {
         knight->setHP(newHP);
     }
 }
-bool PhoenixDownIII::canUse(BaseKnight *knight) { return knight->getHP() < (knight->getMaxHP()/3); }
+bool PhoenixDownIII::canUse(BaseKnight *knight) {return knight->getHP() < (knight->getMaxHP()/3); }
+ItemType PhoenixDownIII::getType() { return type; }
+void PhoenixDownIII::setType(ItemType x) { type = x; }
 PhoenixDownIV::PhoenixDownIV(ItemType t) : BaseItem(t){type = PHOENIXDOWNIV;}
 void PhoenixDownIV::use(BaseKnight *knight) {
     if(knight->getHP()<1) knight->setHP(knight->getMaxHP()/2);
@@ -50,6 +60,9 @@ void PhoenixDownIV::use(BaseKnight *knight) {
         knight->setHP(newHP);
     }
 }
+ItemType PhoenixDownIV::getType() { return type; }
+void PhoenixDownIV::setType(ItemType x) { type = x; }
+bool PhoenixDownIV::canUse(BaseKnight *knight) {return knight->getHP() < (knight->getMaxHP()/2); }
 /* * * END implementation of class Item * * */
 
 
@@ -321,8 +334,31 @@ void KnightAdventure::utilizePhoenix() {
         //Step 1 => find phoenixdown
         BaseItem *temp = armyKnights->lastKnight()->getBag()->getHead();
         while (temp->type == ANTIDOTE) temp = temp->next;
-        if (temp->canUse(armyKnights->lastKnight()))
-            armyKnights->lastKnight()->getBag()->useItem(temp->type);
+        int phoenixType = temp->getType();
+        if(phoenixType == 1) {
+            auto *phoenixToUse = new PhoenixDownI(PHOENIXDOWNI);
+            if (phoenixToUse->canUse(armyKnights->lastKnight())) {
+                armyKnights->lastKnight()->getBag()->useItem(temp->type);
+            }
+        }
+        if(phoenixType == 2) {
+            auto *phoenixToUse = new PhoenixDownII(PHOENIXDOWNII);
+            if (phoenixToUse->canUse(armyKnights->lastKnight())) {
+                armyKnights->lastKnight()->getBag()->useItem(temp->type);
+            }
+        }
+        if(phoenixType == 3) {
+            auto *phoenixToUse = new PhoenixDownIII(PHOENIXDOWNIII);
+            if (phoenixToUse->canUse(armyKnights->lastKnight())) {
+                armyKnights->lastKnight()->getBag()->useItem(temp->type);
+            }
+        }
+        if(phoenixType == 4) {
+            auto *phoenixToUse = new PhoenixDownIV(PHOENIXDOWNIV);
+            if (phoenixToUse->canUse(armyKnights->lastKnight())) {
+                armyKnights->lastKnight()->getBag()->useItem(temp->type);
+            }
+        }
     }
         //Step 2 => call phoenix
     else if (armyKnights->lastKnight()->getHP() < 1 && armyKnights->lastKnight()->getGil() >= 100) {
@@ -510,23 +546,23 @@ void KnightAdventure::run() {
             if((armyKnights->lastKnight()->getLevel() == 10 && armyKnights->lastKnight()->getHP()==armyKnights->lastKnight()->getMaxHP())||(armyKnights->lastKnight()->getType()==DRAGON)) {
                 armyKnights->lastKnight()->setLevel(10);
                 armyKnights->lastKnight()->setGil(999);
+                setMetOmega(true);
             }
             else {
                 armyKnights->lastKnight()->setHP(0);
                 this->utilizePhoenix();
             }
-            setMetOmega(true);
         }
         else if (events->get(i) == 11) {
             if(this->met_Hades()) {armyKnights->printInfo(); continue;}
             if((armyKnights->lastKnight()->getLevel() == 10) || (armyKnights->lastKnight()->getType() == PALADIN && armyKnights->lastKnight()->getLevel() >= 8)) {
                 armyKnights->setPaladinShield(true);
+                // Have met Hades update
+                setMetHades(true);
             } else {
                 armyKnights->lastKnight()->setHP(0);
                 this->utilizePhoenix();
             }
-            // Have met Hades update
-            setMetHades(true);
         }
         else if (events->get(i) == 99) {
             this->setMetUtimecia(true);
