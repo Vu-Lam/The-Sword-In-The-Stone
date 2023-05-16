@@ -89,24 +89,24 @@ BaseBag::BaseBag(BaseKnight *k, int phoenixdownI, int antidote) {
                 j->next->setType(PHOENIXDOWNI);
             }
             ++totalI;
-            if (antidote > 0)
+        }
+    }
+    if (antidote > 0 && phoenixdownI > 0)
+    {
+        for (int i = 0; i < antidote; i++)
+        {
+            BaseItem *temp = new Antidote(ANTIDOTE);
+            if (head == nullptr)
             {
-                for (int j = 0; j < antidote; j++)
-                {
-                    BaseItem *temp1 = new Antidote(ANTIDOTE);
-                    if (head == nullptr)
-                    {
-                        head = temp1;
-                        head->setType(ANTIDOTE);
-                    }
-                    else
-                    {
-                        temp1->next = head;
-                        head = temp1;
-                    }
-                    ++totalI;
-                }
+                head = temp;
+                head->setType(ANTIDOTE);
             }
+            else
+            {
+                temp->next = head;
+                head = temp;
+            }
+            ++totalI;
         }
     }
 }
