@@ -574,7 +574,8 @@ void KnightAdventure::run() {
         // If there is no knight -> break loop to declare lose!
         if(!armyKnights->count()) break;
     }
-    bool win = (armyKnights->count()  && this->metUtimecia())||events->get_tc2049();
+//    cout << "Number of knight after all: " << armyKnights->count() << endl;
+    bool win = armyKnights->count();
     armyKnights->printResult(win);
 }
 KnightAdventure::~KnightAdventure() {
@@ -615,4 +616,4 @@ bool isDragon(int maxhp)
     else
         return false;
 }
-
+// Fix all extra tc in BKel
