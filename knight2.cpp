@@ -318,7 +318,7 @@ void ArmyKnights::printResult(bool win)
 /* * * BEGIN implementation of class KnightAdventure * * */
 KnightAdventure::KnightAdventure()
 {
-    metHades = false; metOmegaWeapon = false; metUltimecia = false;
+    metHades = false; metOmegaWeapon = false;
     armyKnights = nullptr;
     events = nullptr;
 }
@@ -666,6 +666,7 @@ void KnightAdventure::run() {
                     armyKnights->lastKnight()->setGil(newGilOfLastKnight);
                 }
             }
+            delete Queen;
         }
         else if (events->get(i) == 8) {
             if(armyKnights->lastKnight()->getType()==PALADIN) {
@@ -713,7 +714,6 @@ void KnightAdventure::run() {
             }
         }
         else if (events->get(i) == 99) {
-            this->setMetUtimecia(true);
             bool winUltimecia = armyKnights->hasExcaliburSword();
             bool has3Item = armyKnights->hasGuinevereHair() && armyKnights->hasPaladinShield() &&
                             armyKnights->hasLancelotSpear();
