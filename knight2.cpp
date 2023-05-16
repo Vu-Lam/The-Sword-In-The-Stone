@@ -653,3 +653,4 @@ bool isDragon(int maxhp)
         return false;
 }
 // Fix all extra tc in BKel
+// First tc44 fixed
