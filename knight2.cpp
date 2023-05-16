@@ -10,7 +10,6 @@ Events::Events(const string& file_events)
     {
         fin >> arr_events[i];
     }
-    fin >> tc2049;
     data = arr_events;
     fin.close();
 }

@@ -10,7 +10,6 @@ class Events
 private:
     int total_events;
     int *data;
-    int tc2049;
 public:
     explicit Events(const string& file_events);
     int count() const;
