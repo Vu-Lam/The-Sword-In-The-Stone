@@ -377,8 +377,35 @@ void KnightAdventure::findPhoenix() {
         //Step 1 => find phoenixdown
         BaseItem *temp = armyKnights->lastKnight()->getBag()->getHead();
         while (temp->type == ANTIDOTE) temp = temp->next;
-        if (temp->canUse(armyKnights->lastKnight()))
-            armyKnights->lastKnight()->getBag()->useItem(temp->type);
+        int phoenixType = temp->getType();
+        if(phoenixType == 1) {
+            auto *phoenixToUse = new PhoenixDownI(PHOENIXDOWNI);
+            if (phoenixToUse->canUse(armyKnights->lastKnight())) {
+                armyKnights->lastKnight()->getBag()->useItem(temp->type);
+                delete phoenixToUse;
+            }
+        }
+        if(phoenixType == 2) {
+            auto *phoenixToUse = new PhoenixDownII(PHOENIXDOWNII);
+            if (phoenixToUse->canUse(armyKnights->lastKnight())) {
+                armyKnights->lastKnight()->getBag()->useItem(temp->type);
+                delete phoenixToUse;
+            }
+        }
+        if(phoenixType == 3) {
+            auto *phoenixToUse = new PhoenixDownIII(PHOENIXDOWNIII);
+            if (phoenixToUse->canUse(armyKnights->lastKnight())) {
+                armyKnights->lastKnight()->getBag()->useItem(temp->type);
+                delete phoenixToUse;
+            }
+        }
+        if(phoenixType == 4) {
+            auto *phoenixToUse = new PhoenixDownIV(PHOENIXDOWNIV);
+            if (phoenixToUse->canUse(armyKnights->lastKnight())) {
+                armyKnights->lastKnight()->getBag()->useItem(temp->type);
+                delete phoenixToUse;
+            }
+    }
     }
 }
 bool KnightAdventure::fightUltimecia() {
