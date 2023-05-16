@@ -91,7 +91,7 @@ BaseBag::BaseBag(BaseKnight *k, int phoenixdownI, int antidote) {
             ++totalI;
         }
     }
-    if (antidote > 0 && phoenixdownI > 0)
+    if (antidote > 0 && knight->getType() != DRAGON)
     {
         for (int i = 0; i < antidote; i++)
         {
@@ -338,24 +338,28 @@ void KnightAdventure::utilizePhoenix() {
             auto *phoenixToUse = new PhoenixDownI(PHOENIXDOWNI);
             if (phoenixToUse->canUse(armyKnights->lastKnight())) {
                 armyKnights->lastKnight()->getBag()->useItem(temp->type);
+                delete phoenixToUse;
             }
         }
         if(phoenixType == 2) {
             auto *phoenixToUse = new PhoenixDownII(PHOENIXDOWNII);
             if (phoenixToUse->canUse(armyKnights->lastKnight())) {
                 armyKnights->lastKnight()->getBag()->useItem(temp->type);
+                delete phoenixToUse;
             }
         }
         if(phoenixType == 3) {
             auto *phoenixToUse = new PhoenixDownIII(PHOENIXDOWNIII);
             if (phoenixToUse->canUse(armyKnights->lastKnight())) {
                 armyKnights->lastKnight()->getBag()->useItem(temp->type);
+                delete phoenixToUse;
             }
         }
         if(phoenixType == 4) {
             auto *phoenixToUse = new PhoenixDownIV(PHOENIXDOWNIV);
             if (phoenixToUse->canUse(armyKnights->lastKnight())) {
                 armyKnights->lastKnight()->getBag()->useItem(temp->type);
+                delete phoenixToUse;
             }
         }
     }
