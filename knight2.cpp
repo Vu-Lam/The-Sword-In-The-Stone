@@ -206,7 +206,8 @@ bool BaseBag::hasAntidote() {
 }
 void BaseBag::deleteFistItem() {
     if(totalI < 3) {
-        head = nullptr; return;
+        head = nullptr;
+        totalI = 0; return;
     }
     BaseItem *temp = head;
     head = head->next;
@@ -490,6 +491,7 @@ void KnightAdventure::run() {
                 }
                 else {
                     //Trung doc
+//                    cout << "Trung doc\n";
                     for (int j = 0; j < 3; j++) {
                         armyKnights->lastKnight()->getBag()->deleteFistItem();
                     }
@@ -503,6 +505,7 @@ void KnightAdventure::run() {
 
                 }
             }
+            delete Tornbery;
         }
         else if (events->get(i) == 7) {
             auto *Queen = new BaseOpponent(i,events->get(i));
