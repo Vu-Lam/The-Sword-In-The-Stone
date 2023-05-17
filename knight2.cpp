@@ -426,34 +426,47 @@ void KnightAdventure::findPhoenix() {
         auto*drug2 = new PhoenixDownII(PHOENIXDOWNII);
         auto*drug3 = new PhoenixDownIII(PHOENIXDOWNIII);
         auto*drug4 = new PhoenixDownIV(PHOENIXDOWNIV);
-        bool have_use = !drug1->canUse(armyKnights->lastKnight()) && !drug2->canUse(armyKnights->lastKnight()) && !drug3->canUse(armyKnights->lastKnight()) && !drug4->canUse(armyKnights->lastKnight());
+        bool have_use = false;
         BaseItem *temp = armyKnights->lastKnight()->getBag()->getHead();
-        while (!have_use) {
-            while (temp->type == ANTIDOTE) temp = temp->next;
             //Create drug
-            if(temp->type == 1) {
-                if (drug1->canUse(armyKnights->lastKnight())){
-                    armyKnights->lastKnight()->getBag()->useItem(PHOENIXDOWNI);
-                    have_use = true;
-                }
+            bool canNotUseBoth = !(drug1->canUse(armyKnights->lastKnight()) && drug2->canUse(armyKnights->lastKnight()) && drug3->canUse(armyKnights->lastKnight()) && drug4->canUse(armyKnights->lastKnight()));
+            if(canNotUseBoth) {
+                delete drug1;
+                delete drug2;
+                delete drug3;
+                delete drug4;
+                return;
             }
-            else if(temp->type == 2) {
-                if (drug2->canUse(armyKnights->lastKnight())){
-                    armyKnights->lastKnight()->getBag()->useItem(PHOENIXDOWNII);
-                    have_use = true;
-                }            }
-            else if(temp->type == 3) {
-                if (drug3->canUse(armyKnights->lastKnight())){
-                    armyKnights->lastKnight()->getBag()->useItem(PHOENIXDOWNIII);
-                    have_use = true;
-                }            }
-            else if(temp->type == 4) {
-                if (drug4->canUse(armyKnights->lastKnight())){
-                    armyKnights->lastKnight()->getBag()->useItem(PHOENIXDOWNIV);
-                    have_use = true;
+            while(!have_use) {
+                while (temp->type == ANTIDOTE) temp = temp->next;
+                if (temp->type == 1) {
+                    if (drug1->canUse(armyKnights->lastKnight())) {
+                        armyKnights->lastKnight()->getBag()->useItem(PHOENIXDOWNI);
+                        have_use = true;
+                    }
                 }
+                else if (temp->type == 2) {
+                    if (drug2->canUse(armyKnights->lastKnight())) {
+                        armyKnights->lastKnight()->getBag()->useItem(PHOENIXDOWNII);
+                        have_use = true;
+                    }
+                }
+                else if (temp->type == 3) {
+                    if (drug3->canUse(armyKnights->lastKnight())) {
+                        armyKnights->lastKnight()->getBag()->useItem(PHOENIXDOWNIII);
+                        have_use = true;
+                    }
+                }
+                else if (temp->type == 4) {
+                    if (drug4->canUse(armyKnights->lastKnight())) {
+                        armyKnights->lastKnight()->getBag()->useItem(PHOENIXDOWNIV);
+                        have_use = true;
+                    }
+                }
+                temp = temp->next;
             }
-        }
+
+
         delete drug1;
         delete drug2;
         delete drug3;
