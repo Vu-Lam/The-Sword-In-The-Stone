@@ -422,42 +422,42 @@ void KnightAdventure::utilizePhoenix() {
 }
 void KnightAdventure::findPhoenix() {
     if (armyKnights->lastKnight()->getBag()->hasPhoenixDown()) {
-        if (armyKnights->lastKnight()->getBag()->hasPhoenixDownIV()) {
-            auto* drug = new PhoenixDownIV(PHOENIXDOWNIV);
-            if(drug->canUse(armyKnights->lastKnight()))
-            {
-                armyKnights->lastKnight()->getBag()->useItem(PHOENIXDOWNIV);
-                delete drug; return;
+        auto*drug1 = new PhoenixDownI(PHOENIXDOWNI);
+        auto*drug2 = new PhoenixDownII(PHOENIXDOWNII);
+        auto*drug3 = new PhoenixDownIII(PHOENIXDOWNIII);
+        auto*drug4 = new PhoenixDownIV(PHOENIXDOWNIV);
+        bool have_use = !drug1->canUse(armyKnights->lastKnight()) && !drug2->canUse(armyKnights->lastKnight()) && !drug3->canUse(armyKnights->lastKnight()) && !drug4->canUse(armyKnights->lastKnight());
+        BaseItem *temp = armyKnights->lastKnight()->getBag()->getHead();
+        while (!have_use) {
+            while (temp->type == ANTIDOTE) temp = temp->next;
+            //Create drug
+            if(temp->type == 1) {
+                if (drug1->canUse(armyKnights->lastKnight())){
+                    armyKnights->lastKnight()->getBag()->useItem(PHOENIXDOWNI);
+                    have_use = true;
+                }
             }
-            else delete drug;
-        }
-        if (armyKnights->lastKnight()->getBag()->hasPhoenixDownIII()) {
-            auto* drug = new PhoenixDownIII(PHOENIXDOWNIII);
-            if(drug->canUse(armyKnights->lastKnight()))
-            {
-                armyKnights->lastKnight()->getBag()->useItem(PHOENIXDOWNIII);
-                delete drug; return;
+            else if(temp->type == 2) {
+                if (drug2->canUse(armyKnights->lastKnight())){
+                    armyKnights->lastKnight()->getBag()->useItem(PHOENIXDOWNII);
+                    have_use = true;
+                }            }
+            else if(temp->type == 3) {
+                if (drug3->canUse(armyKnights->lastKnight())){
+                    armyKnights->lastKnight()->getBag()->useItem(PHOENIXDOWNIII);
+                    have_use = true;
+                }            }
+            else if(temp->type == 4) {
+                if (drug4->canUse(armyKnights->lastKnight())){
+                    armyKnights->lastKnight()->getBag()->useItem(PHOENIXDOWNIV);
+                    have_use = true;
+                }
             }
-            else delete drug;
         }
-        if (armyKnights->lastKnight()->getBag()->hasPhoenixDownII()) {
-            auto* drug = new PhoenixDownII(PHOENIXDOWNII);
-            if(drug->canUse(armyKnights->lastKnight()))
-            {
-                armyKnights->lastKnight()->getBag()->useItem(PHOENIXDOWNII);
-                delete drug; return;
-            }
-            else delete drug;
-        }
-        if (armyKnights->lastKnight()->getBag()->hasPhoenixDownI()) {
-            auto* drug = new PhoenixDownI(PHOENIXDOWNI);
-            if(drug->canUse(armyKnights->lastKnight()))
-            {
-                armyKnights->lastKnight()->getBag()->useItem(PHOENIXDOWNI);
-                delete drug; return;
-            }
-            else delete drug;
-        }
+        delete drug1;
+        delete drug2;
+        delete drug3;
+        delete drug4;
     }
 }
 bool KnightAdventure::fightUltimecia() {
