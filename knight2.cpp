@@ -214,6 +214,12 @@ void BaseBag::deleteFistItem() {
     delete temp;
     totalI--;
 }
+
+BaseBag::~BaseBag() {
+    while (head != nullptr) {
+        deleteFistItem();
+    }
+}
 /* * * END implementation of class BaseBag * * */
 
 

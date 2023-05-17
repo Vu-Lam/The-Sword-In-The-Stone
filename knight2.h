@@ -224,6 +224,7 @@ public:
     bool hasPhoenixDown();
     bool hasAntidote();
     void deleteFistItem();
+    ~BaseBag();
 };
 
 class KnightAdventure
