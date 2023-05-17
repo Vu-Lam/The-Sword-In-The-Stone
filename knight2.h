@@ -116,11 +116,12 @@ public:
     void setIsPoisoned(bool x) { is_poisoned = x;}
     BaseBag* getBag() const {return bag;}
     void setBag (BaseBag *x) {bag = x;}
+    ~BaseKnight();
 };
 class ArmyKnights
 {
 private:
-    int total_knights;
+    int total_knights{};
     BaseKnight **array_knights;
     bool PaladinShield, LancelotSpear, GuinevereHair,ExcaliburSword;
 public:
@@ -224,6 +225,7 @@ public:
     bool hasPhoenixDown();
     bool hasAntidote();
     void deleteFistItem();
+    void deleteBag();
     ~BaseBag();
 };
 

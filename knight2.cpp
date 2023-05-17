@@ -214,7 +214,13 @@ void BaseBag::deleteFistItem() {
     delete temp;
     totalI--;
 }
-
+void BaseBag::deleteBag() {
+    while (head!= nullptr) {
+        auto* temp = head;
+        head = head->next;
+        delete temp;
+    }
+}
 BaseBag::~BaseBag() {
     while (head != nullptr) {
         deleteFistItem();
@@ -245,6 +251,9 @@ int BaseKnight::getMaxHP() const { return max_hp; }
 int BaseKnight::getHP() const { return hp; }
 bool BaseKnight::isPoisoned() const { return is_poisoned; }
 int BaseKnight::getAntidote() const{ return antidote; }
+BaseKnight::~BaseKnight() {
+    delete bag;
+}
 /* * * END implementation of class BaseKnight * * */
 
 
@@ -278,7 +287,10 @@ ArmyKnights::ArmyKnights(const string &file_armyknights)
     fin.close();
 }
 ArmyKnights::~ArmyKnights() {
-    for(int i = 0; i < total_knights; i++) delete array_knights[i];
+    for(int i = 0; i < total_knights; i++) {
+        array_knights[i]->getBag()->deleteBag();
+        delete array_knights[i];
+    }
     delete[] array_knights;
 }
 int ArmyKnights::count() const {return total_knights;}
