@@ -225,6 +225,7 @@ BaseBag::~BaseBag() {
     while (head != nullptr) {
         deleteFistItem();
     }
+    delete knight;
 }
 /* * * END implementation of class BaseBag * * */
 
@@ -252,7 +253,8 @@ int BaseKnight::getHP() const { return hp; }
 bool BaseKnight::isPoisoned() const { return is_poisoned; }
 int BaseKnight::getAntidote() const{ return antidote; }
 BaseKnight::~BaseKnight() {
-    delete bag;
+     bag->deleteBag();
+     delete bag;
 }
 /* * * END implementation of class BaseKnight * * */
 
