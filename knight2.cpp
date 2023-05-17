@@ -429,15 +429,15 @@ void KnightAdventure::findPhoenix() {
         bool have_use = false;
         BaseItem *temp = armyKnights->lastKnight()->getBag()->getHead();
             //Create drug
-            bool canNotUseBoth = !(drug1->canUse(armyKnights->lastKnight()) && drug2->canUse(armyKnights->lastKnight()) && drug3->canUse(armyKnights->lastKnight()) && drug4->canUse(armyKnights->lastKnight()));
-            if(canNotUseBoth) {
+            bool canUse = (drug1->canUse(armyKnights->lastKnight()) || drug2->canUse(armyKnights->lastKnight()) || drug3->canUse(armyKnights->lastKnight()) || drug4->canUse(armyKnights->lastKnight()));
+            if(!canUse) {
                 delete drug1;
                 delete drug2;
                 delete drug3;
                 delete drug4;
                 return;
             }
-            while(!have_use) {
+            while(!have_use ) {
                 while (temp->type == ANTIDOTE) temp = temp->next;
                 if (temp->type == 1) {
                     if (drug1->canUse(armyKnights->lastKnight())) {
@@ -465,8 +465,6 @@ void KnightAdventure::findPhoenix() {
                 }
                 temp = temp->next;
             }
-
-
         delete drug1;
         delete drug2;
         delete drug3;
