@@ -116,12 +116,12 @@ public:
     void setIsPoisoned(bool x) { is_poisoned = x;}
     BaseBag* getBag() const {return bag;}
     void setBag (BaseBag *x) {bag = x;}
-    ~BaseKnight();
+    ~BaseKnight();;
 };
 class ArmyKnights
 {
 private:
-    int total_knights{};
+    int total_knights;
     BaseKnight **array_knights;
     bool PaladinShield, LancelotSpear, GuinevereHair,ExcaliburSword;
 public:
@@ -140,6 +140,7 @@ public:
     void setLancelotSpear(bool x) {LancelotSpear = x;}
     void setGuinevereHair(bool x) {GuinevereHair = x;}
     void setExcaliburSword(bool x) {ExcaliburSword = x;}
+    BaseKnight **getArrayKnight() const {return array_knights;}
     void printInfo() const;
     static void printResult(bool win) ;
 };
@@ -167,46 +168,46 @@ class Antidote : public BaseItem
 {
 public:
     explicit Antidote(ItemType t);
-    ItemType getType() override;
-    void setType(ItemType x) override;
-    bool canUse(BaseKnight *knight) override;
-    void use(BaseKnight *knight) override;
+    ItemType getType();
+    void setType(ItemType x);
+    bool canUse(BaseKnight *knight);
+    void use(BaseKnight *knight);
 };
 class PhoenixDownI : public BaseItem
 {
 public:
     explicit PhoenixDownI(ItemType t);
-    ItemType getType() override;
-    void setType(ItemType x) override;
-    bool canUse(BaseKnight *knight) override;
-    void use(BaseKnight *knight) override;
+    ItemType getType();
+    void setType(ItemType x);
+    bool canUse(BaseKnight *knight);
+    void use(BaseKnight *knight);
 };
 class PhoenixDownII : public BaseItem
 {
 public:
     explicit PhoenixDownII(ItemType t);
-    ItemType getType() override;
-    void setType(ItemType x) override;
-    bool canUse(BaseKnight *knight) override;
-    void use(BaseKnight *knight) override;
+    ItemType getType();
+    void setType(ItemType x);
+    bool canUse(BaseKnight *knight);
+    void use(BaseKnight *knight);
 };
 class PhoenixDownIII : public BaseItem
 {
 public:
     explicit PhoenixDownIII(ItemType t);
-    ItemType getType() override;
-    void setType(ItemType x) override;
-    bool canUse(BaseKnight *knight) override;
-    void use(BaseKnight *knight) override;
+    ItemType getType();
+    void setType(ItemType x);
+    bool canUse(BaseKnight *knight);
+    void use(BaseKnight *knight);
 };
 class PhoenixDownIV : public BaseItem
 {
 public:
     explicit PhoenixDownIV(ItemType t);
-    ItemType getType() override;
-    void setType(ItemType x) override;
-    bool canUse(BaseKnight *knight) override;
-    void use(BaseKnight *knight) override;
+    ItemType getType();
+    void setType(ItemType x);
+    bool canUse(BaseKnight *knight);
+    void use(BaseKnight *knight);
 };
 class BaseBag
 {
@@ -219,13 +220,13 @@ public:
     BaseItem *getHead() { return head; }
     virtual bool insertFirst(BaseItem *item);
     bool canBeAdd(ItemType t);
+    int getToTalItem() const {return totalI;}
     virtual BaseItem *get(ItemType itemType);
     virtual string toString() const;
     void useItem(ItemType t);
     bool hasPhoenixDown();
     bool hasAntidote();
     void deleteFistItem();
-    void deleteBag();
     ~BaseBag();
 };
 
@@ -236,6 +237,7 @@ private:
     Events *events;
     bool metOmegaWeapon;
     bool metHades;
+    bool metUltimecia;
 public:
     KnightAdventure();
     ~KnightAdventure(); // TODO:
@@ -247,6 +249,7 @@ public:
     bool metOmega() const {return metOmegaWeapon;}
     void setMetHades(bool x) {metHades = x;}
     bool met_Hades() const {return metHades;}
+    void setMetUtimecia(bool x) {metUltimecia = x;}
     void utilizePhoenix();
     void findPhoenix();
     bool fightUltimecia();

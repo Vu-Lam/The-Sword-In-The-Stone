@@ -214,19 +214,15 @@ void BaseBag::deleteFistItem() {
     delete temp;
     totalI--;
 }
-void BaseBag::deleteBag() {
-    while (head!= nullptr) {
-        auto* temp = head;
+
+BaseBag::~BaseBag() {
+    while(head != nullptr) {
+        BaseItem* temp = head;
         head = head->next;
         delete temp;
     }
 }
-BaseBag::~BaseBag() {
-    while (head != nullptr) {
-        deleteFistItem();
-    }
-    delete knight;
-}
+
 /* * * END implementation of class BaseBag * * */
 
 
@@ -252,10 +248,8 @@ int BaseKnight::getMaxHP() const { return max_hp; }
 int BaseKnight::getHP() const { return hp; }
 bool BaseKnight::isPoisoned() const { return is_poisoned; }
 int BaseKnight::getAntidote() const{ return antidote; }
-BaseKnight::~BaseKnight() {
-     bag->deleteBag();
-     delete bag;
-}
+
+BaseKnight::~BaseKnight() { delete bag;}
 /* * * END implementation of class BaseKnight * * */
 
 
@@ -275,7 +269,6 @@ ArmyKnights::ArmyKnights(const string &file_armyknights)
         fin >> phoenixdownI;
         fin >> gil;
         fin >> antidote;
-        k[i] = new BaseKnight();
         k[i] = k[i]->create(i + 1, hp, level, gil, antidote, phoenixdownI);
         if (isLancelot(k[i]->getMaxHP()))
             k[i]->setType(LANCELOT);
@@ -290,7 +283,6 @@ ArmyKnights::ArmyKnights(const string &file_armyknights)
 }
 ArmyKnights::~ArmyKnights() {
     for(int i = 0; i < total_knights; i++) {
-        array_knights[i]->getBag()->deleteBag();
         delete array_knights[i];
     }
     delete[] array_knights;
@@ -338,7 +330,7 @@ void ArmyKnights::printResult(bool win)
 /* * * BEGIN implementation of class KnightAdventure * * */
 KnightAdventure::KnightAdventure()
 {
-    metHades = false; metOmegaWeapon = false;
+    metHades = false; metOmegaWeapon = false; metUltimecia = false;
     armyKnights = nullptr;
     events = nullptr;
 }
@@ -395,150 +387,35 @@ void KnightAdventure::utilizePhoenix() {
 void KnightAdventure::findPhoenix() {
     if (armyKnights->lastKnight()->getBag()->hasPhoenixDown()) {
         //Step 1 => find phoenixdown
-        bool have_use = false;
         BaseItem *temp = armyKnights->lastKnight()->getBag()->getHead();
-        while (temp->type == PHOENIXDOWNIV) temp = temp->next;
-        if(!have_use) {
-            int phoenixType = temp->getType();
-            if (phoenixType == 1) {
-                auto *phoenixToUse = new PhoenixDownI(PHOENIXDOWNI);
-                if (phoenixToUse->canUse(armyKnights->lastKnight())) {
-                    armyKnights->lastKnight()->getBag()->useItem(temp->type);
-                    have_use = true;
-                    delete phoenixToUse;
-                }
-            }
-            if (phoenixType == 2) {
-                auto *phoenixToUse = new PhoenixDownII(PHOENIXDOWNII);
-                if (phoenixToUse->canUse(armyKnights->lastKnight())) {
-                    armyKnights->lastKnight()->getBag()->useItem(temp->type);
-                    have_use = true;
-                    delete phoenixToUse;
-                }
-            }
-            if (phoenixType == 3) {
-                auto *phoenixToUse = new PhoenixDownIII(PHOENIXDOWNIII);
-                if (phoenixToUse->canUse(armyKnights->lastKnight())) {
-                    armyKnights->lastKnight()->getBag()->useItem(temp->type);
-                    have_use = true;
-                    delete phoenixToUse;
-                }
-            }
-            if (phoenixType == 4) {
-                auto *phoenixToUse = new PhoenixDownIV(PHOENIXDOWNIV);
-                if (phoenixToUse->canUse(armyKnights->lastKnight())) {
-                    armyKnights->lastKnight()->getBag()->useItem(temp->type);
-                    have_use = true;
-                    delete phoenixToUse;
-                }
+        while (temp->type == ANTIDOTE) temp = temp->next;
+        int phoenixType = temp->getType();
+        if(phoenixType == 1) {
+            auto *phoenixToUse = new PhoenixDownI(PHOENIXDOWNI);
+            if (phoenixToUse->canUse(armyKnights->lastKnight())) {
+                armyKnights->lastKnight()->getBag()->useItem(temp->type);
+                delete phoenixToUse;
             }
         }
-        while (temp->type == PHOENIXDOWNIII) temp = temp->next;
-        if(!have_use) {
-            int phoenixType = temp->getType();
-            if (phoenixType == 1) {
-                auto *phoenixToUse = new PhoenixDownI(PHOENIXDOWNI);
-                if (phoenixToUse->canUse(armyKnights->lastKnight())) {
-                    armyKnights->lastKnight()->getBag()->useItem(temp->type);
-                    have_use = true;
-                    delete phoenixToUse;
-                }
-            }
-            if (phoenixType == 2) {
-                auto *phoenixToUse = new PhoenixDownII(PHOENIXDOWNII);
-                if (phoenixToUse->canUse(armyKnights->lastKnight())) {
-                    armyKnights->lastKnight()->getBag()->useItem(temp->type);
-                    have_use = true;
-                    delete phoenixToUse;
-                }
-            }
-            if (phoenixType == 3) {
-                auto *phoenixToUse = new PhoenixDownIII(PHOENIXDOWNIII);
-                if (phoenixToUse->canUse(armyKnights->lastKnight())) {
-                    armyKnights->lastKnight()->getBag()->useItem(temp->type);
-                    have_use = true;
-                    delete phoenixToUse;
-                }
-            }
-            if (phoenixType == 4) {
-                auto *phoenixToUse = new PhoenixDownIV(PHOENIXDOWNIV);
-                if (phoenixToUse->canUse(armyKnights->lastKnight())) {
-                    armyKnights->lastKnight()->getBag()->useItem(temp->type);
-                    have_use = true;
-                    delete phoenixToUse;
-                }
+        if(phoenixType == 2) {
+            auto *phoenixToUse = new PhoenixDownII(PHOENIXDOWNII);
+            if (phoenixToUse->canUse(armyKnights->lastKnight())) {
+                armyKnights->lastKnight()->getBag()->useItem(temp->type);
+                delete phoenixToUse;
             }
         }
-        while (temp->type == PHOENIXDOWNII) temp = temp->next;
-        if(!have_use) {
-            int phoenixType = temp->getType();
-            if (phoenixType == 1) {
-                auto *phoenixToUse = new PhoenixDownI(PHOENIXDOWNI);
-                if (phoenixToUse->canUse(armyKnights->lastKnight())) {
-                    armyKnights->lastKnight()->getBag()->useItem(temp->type);
-                    have_use = true;
-                    delete phoenixToUse;
-                }
-            }
-            if (phoenixType == 2) {
-                auto *phoenixToUse = new PhoenixDownII(PHOENIXDOWNII);
-                if (phoenixToUse->canUse(armyKnights->lastKnight())) {
-                    armyKnights->lastKnight()->getBag()->useItem(temp->type);
-                    have_use = true;
-                    delete phoenixToUse;
-                }
-            }
-            if (phoenixType == 3) {
-                auto *phoenixToUse = new PhoenixDownIII(PHOENIXDOWNIII);
-                if (phoenixToUse->canUse(armyKnights->lastKnight())) {
-                    armyKnights->lastKnight()->getBag()->useItem(temp->type);
-                    have_use = true;
-                    delete phoenixToUse;
-                }
-            }
-            if (phoenixType == 4) {
-                auto *phoenixToUse = new PhoenixDownIV(PHOENIXDOWNIV);
-                if (phoenixToUse->canUse(armyKnights->lastKnight())) {
-                    armyKnights->lastKnight()->getBag()->useItem(temp->type);
-                    have_use = true;
-                    delete phoenixToUse;
-                }
+        if(phoenixType == 3) {
+            auto *phoenixToUse = new PhoenixDownIII(PHOENIXDOWNIII);
+            if (phoenixToUse->canUse(armyKnights->lastKnight())) {
+                armyKnights->lastKnight()->getBag()->useItem(temp->type);
+                delete phoenixToUse;
             }
         }
-        while (temp->type == PHOENIXDOWNI) temp = temp->next;
-        if(!have_use) {
-            int phoenixType = temp->getType();
-            if (phoenixType == 1) {
-                auto *phoenixToUse = new PhoenixDownI(PHOENIXDOWNI);
-                if (phoenixToUse->canUse(armyKnights->lastKnight())) {
-                    armyKnights->lastKnight()->getBag()->useItem(temp->type);
-                    have_use = true;
-                    delete phoenixToUse;
-                }
-            }
-            if (phoenixType == 2) {
-                auto *phoenixToUse = new PhoenixDownII(PHOENIXDOWNII);
-                if (phoenixToUse->canUse(armyKnights->lastKnight())) {
-                    armyKnights->lastKnight()->getBag()->useItem(temp->type);
-                    have_use = true;
-                    delete phoenixToUse;
-                }
-            }
-            if (phoenixType == 3) {
-                auto *phoenixToUse = new PhoenixDownIII(PHOENIXDOWNIII);
-                if (phoenixToUse->canUse(armyKnights->lastKnight())) {
-                    armyKnights->lastKnight()->getBag()->useItem(temp->type);
-                    have_use = true;
-                    delete phoenixToUse;
-                }
-            }
-            if (phoenixType == 4) {
-                auto *phoenixToUse = new PhoenixDownIV(PHOENIXDOWNIV);
-                if (phoenixToUse->canUse(armyKnights->lastKnight())) {
-                    armyKnights->lastKnight()->getBag()->useItem(temp->type);
-                    have_use = true;
-                    delete phoenixToUse;
-                }
+        if(phoenixType == 4) {
+            auto *phoenixToUse = new PhoenixDownIV(PHOENIXDOWNIV);
+            if (phoenixToUse->canUse(armyKnights->lastKnight())) {
+                armyKnights->lastKnight()->getBag()->useItem(temp->type);
+                delete phoenixToUse;
             }
         }
     }
@@ -618,10 +495,10 @@ void KnightAdventure::run() {
 //                cout << "Win doi thu co dame: " << gau->baseDamageO() << endl;
             }
             else {
+//                cout << "Lose doi thu co dame: " << gau->baseDamageO();
                 int newHP = armyKnights->lastKnight()->getHP();
                 int opponentDamage =  gau->baseDamageO() * (gau->getLevelO() - armyKnights->lastKnight()->getLevel());
                 newHP-=opponentDamage;
-//                cout << "Lose doi thu co dame: " << opponentDamage;
                 armyKnights->lastKnight()->setHP(newHP);
 //                cout << " \t newHP: " << newHP << endl;
                 if (newHP <= 0) {
@@ -686,7 +563,6 @@ void KnightAdventure::run() {
                     armyKnights->lastKnight()->setGil(newGilOfLastKnight);
                 }
             }
-            delete Queen;
         }
         else if (events->get(i) == 8) {
             if(armyKnights->lastKnight()->getType()==PALADIN) {
@@ -734,6 +610,7 @@ void KnightAdventure::run() {
             }
         }
         else if (events->get(i) == 99) {
+            this->setMetUtimecia(true);
             bool winUltimecia = armyKnights->hasExcaliburSword();
             bool has3Item = armyKnights->hasGuinevereHair() && armyKnights->hasPaladinShield() &&
                             armyKnights->hasLancelotSpear();
