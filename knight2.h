@@ -168,46 +168,46 @@ class Antidote : public BaseItem
 {
 public:
     explicit Antidote(ItemType t);
-    ItemType getType();
-    void setType(ItemType x);
-    bool canUse(BaseKnight *knight);
-    void use(BaseKnight *knight);
+    ItemType getType() override;
+    void setType(ItemType x) override;
+    bool canUse(BaseKnight *knight) override;
+    void use(BaseKnight *knight) override;
 };
 class PhoenixDownI : public BaseItem
 {
 public:
     explicit PhoenixDownI(ItemType t);
-    ItemType getType();
-    void setType(ItemType x);
-    bool canUse(BaseKnight *knight);
-    void use(BaseKnight *knight);
+    ItemType getType() override;
+    void setType(ItemType x) override;
+    bool canUse(BaseKnight *knight) override;
+    void use(BaseKnight *knight) override;
 };
 class PhoenixDownII : public BaseItem
 {
 public:
     explicit PhoenixDownII(ItemType t);
-    ItemType getType();
-    void setType(ItemType x);
-    bool canUse(BaseKnight *knight);
-    void use(BaseKnight *knight);
+    ItemType getType() override;
+    void setType(ItemType x) override;
+    bool canUse(BaseKnight *knight) override;
+    void use(BaseKnight *knight) override;
 };
 class PhoenixDownIII : public BaseItem
 {
 public:
     explicit PhoenixDownIII(ItemType t);
-    ItemType getType();
-    void setType(ItemType x);
-    bool canUse(BaseKnight *knight);
-    void use(BaseKnight *knight);
+    ItemType getType() override;
+    void setType(ItemType x) override;
+    bool canUse(BaseKnight *knight) override;
+    void use(BaseKnight *knight) override;
 };
 class PhoenixDownIV : public BaseItem
 {
 public:
     explicit PhoenixDownIV(ItemType t);
-    ItemType getType();
-    void setType(ItemType x);
-    bool canUse(BaseKnight *knight);
-    void use(BaseKnight *knight);
+    ItemType getType() override;
+    void setType(ItemType x) override;
+    bool canUse(BaseKnight *knight) override;
+    void use(BaseKnight *knight) override;
 };
 class BaseBag
 {
@@ -225,6 +225,10 @@ public:
     virtual string toString() const;
     void useItem(ItemType t);
     bool hasPhoenixDown();
+    bool hasPhoenixDownI();
+    bool hasPhoenixDownII();
+    bool hasPhoenixDownIII();
+    bool hasPhoenixDownIV();
     bool hasAntidote();
     void deleteFistItem();
     ~BaseBag();

@@ -195,6 +195,42 @@ bool BaseBag::hasPhoenixDown() {
     }
     return false;
 }
+bool BaseBag::hasPhoenixDownIV() {
+    if(!totalI) return false;
+    BaseItem *temp = head;
+    while(temp!= nullptr) {
+        if(temp->type==PHOENIXDOWNIV) return true;
+        temp = temp->next;
+    }
+    return false;
+}
+bool BaseBag::hasPhoenixDownIII() {
+    if(!totalI) return false;
+    BaseItem *temp = head;
+    while(temp!= nullptr) {
+        if(temp->type==PHOENIXDOWNIII) return true;
+        temp = temp->next;
+    }
+    return false;
+}
+bool BaseBag::hasPhoenixDownII() {
+    if(!totalI) return false;
+    BaseItem *temp = head;
+    while(temp!= nullptr) {
+        if(temp->type==PHOENIXDOWNII) return true;
+        temp = temp->next;
+    }
+    return false;
+}
+bool BaseBag::hasPhoenixDownI() {
+    if(!totalI) return false;
+    BaseItem *temp = head;
+    while(temp!= nullptr) {
+        if(temp->type==PHOENIXDOWNI) return true;
+        temp = temp->next;
+    }
+    return false;
+}
 bool BaseBag::hasAntidote() {
     if(head == nullptr) return false;
     BaseItem *temp = head;
@@ -351,29 +387,29 @@ void KnightAdventure::utilizePhoenix() {
             auto *phoenixToUse = new PhoenixDownI(PHOENIXDOWNI);
             if (phoenixToUse->canUse(armyKnights->lastKnight())) {
                 armyKnights->lastKnight()->getBag()->useItem(temp->type);
-                delete phoenixToUse;
             }
+            delete phoenixToUse;
         }
-        if(phoenixType == 2) {
+        else if(phoenixType == 2) {
             auto *phoenixToUse = new PhoenixDownII(PHOENIXDOWNII);
             if (phoenixToUse->canUse(armyKnights->lastKnight())) {
                 armyKnights->lastKnight()->getBag()->useItem(temp->type);
-                delete phoenixToUse;
             }
+            delete phoenixToUse;
         }
-        if(phoenixType == 3) {
+        else if(phoenixType == 3) {
             auto *phoenixToUse = new PhoenixDownIII(PHOENIXDOWNIII);
             if (phoenixToUse->canUse(armyKnights->lastKnight())) {
                 armyKnights->lastKnight()->getBag()->useItem(temp->type);
-                delete phoenixToUse;
             }
+            delete phoenixToUse;
         }
-        if(phoenixType == 4) {
+        else if(phoenixType == 4) {
             auto *phoenixToUse = new PhoenixDownIV(PHOENIXDOWNIV);
             if (phoenixToUse->canUse(armyKnights->lastKnight())) {
                 armyKnights->lastKnight()->getBag()->useItem(temp->type);
-                delete phoenixToUse;
             }
+            delete phoenixToUse;
         }
     }
         //Step 2 => call phoenix
@@ -386,37 +422,41 @@ void KnightAdventure::utilizePhoenix() {
 }
 void KnightAdventure::findPhoenix() {
     if (armyKnights->lastKnight()->getBag()->hasPhoenixDown()) {
-        //Step 1 => find phoenixdown
-        BaseItem *temp = armyKnights->lastKnight()->getBag()->getHead();
-        while (temp->type == ANTIDOTE) temp = temp->next;
-        int phoenixType = temp->getType();
-        if(phoenixType == 1) {
-            auto *phoenixToUse = new PhoenixDownI(PHOENIXDOWNI);
-            if (phoenixToUse->canUse(armyKnights->lastKnight())) {
-                armyKnights->lastKnight()->getBag()->useItem(temp->type);
-                delete phoenixToUse;
+        if (armyKnights->lastKnight()->getBag()->hasPhoenixDownIV()) {
+            auto* drug = new PhoenixDownIV(PHOENIXDOWNIV);
+            if(drug->canUse(armyKnights->lastKnight()))
+            {
+                armyKnights->lastKnight()->getBag()->useItem(PHOENIXDOWNIV);
+                delete drug; return;
             }
+            else delete drug;
         }
-        if(phoenixType == 2) {
-            auto *phoenixToUse = new PhoenixDownII(PHOENIXDOWNII);
-            if (phoenixToUse->canUse(armyKnights->lastKnight())) {
-                armyKnights->lastKnight()->getBag()->useItem(temp->type);
-                delete phoenixToUse;
+        if (armyKnights->lastKnight()->getBag()->hasPhoenixDownIII()) {
+            auto* drug = new PhoenixDownIII(PHOENIXDOWNIII);
+            if(drug->canUse(armyKnights->lastKnight()))
+            {
+                armyKnights->lastKnight()->getBag()->useItem(PHOENIXDOWNIII);
+                delete drug; return;
             }
+            else delete drug;
         }
-        if(phoenixType == 3) {
-            auto *phoenixToUse = new PhoenixDownIII(PHOENIXDOWNIII);
-            if (phoenixToUse->canUse(armyKnights->lastKnight())) {
-                armyKnights->lastKnight()->getBag()->useItem(temp->type);
-                delete phoenixToUse;
+        if (armyKnights->lastKnight()->getBag()->hasPhoenixDownII()) {
+            auto* drug = new PhoenixDownII(PHOENIXDOWNII);
+            if(drug->canUse(armyKnights->lastKnight()))
+            {
+                armyKnights->lastKnight()->getBag()->useItem(PHOENIXDOWNII);
+                delete drug; return;
             }
+            else delete drug;
         }
-        if(phoenixType == 4) {
-            auto *phoenixToUse = new PhoenixDownIV(PHOENIXDOWNIV);
-            if (phoenixToUse->canUse(armyKnights->lastKnight())) {
-                armyKnights->lastKnight()->getBag()->useItem(temp->type);
-                delete phoenixToUse;
+        if (armyKnights->lastKnight()->getBag()->hasPhoenixDownI()) {
+            auto* drug = new PhoenixDownI(PHOENIXDOWNI);
+            if(drug->canUse(armyKnights->lastKnight()))
+            {
+                armyKnights->lastKnight()->getBag()->useItem(PHOENIXDOWNI);
+                delete drug; return;
             }
+            else delete drug;
         }
     }
 }
@@ -507,6 +547,7 @@ void KnightAdventure::run() {
                 else this->findPhoenix();
 
             }
+        delete gau;
         }
         else if (events->get(i) == 6) {
             auto *Tornbery = new BaseOpponent(i, events->get(i));
