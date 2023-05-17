@@ -428,43 +428,40 @@ void KnightAdventure::findPhoenix() {
         auto*drug4 = new PhoenixDownIV(PHOENIXDOWNIV);
         bool have_use = false;
         BaseItem *temp = armyKnights->lastKnight()->getBag()->getHead();
-            //Create drug
-            bool canUse = (drug1->canUse(armyKnights->lastKnight()) || drug2->canUse(armyKnights->lastKnight()) || drug3->canUse(armyKnights->lastKnight()) || drug4->canUse(armyKnights->lastKnight()));
-            if(!canUse) {
-                delete drug1;
-                delete drug2;
-                delete drug3;
-                delete drug4;
-                return;
+        //Create drug
+        bool hasI_canUseI = drug1->canUse(armyKnights->lastKnight()) && armyKnights->lastKnight()->getBag()->hasPhoenixDownI();
+        bool hasII_canUseII = drug2->canUse(armyKnights->lastKnight()) && armyKnights->lastKnight()->getBag()->hasPhoenixDownII();
+        bool hasIII_canUseIII = drug3->canUse(armyKnights->lastKnight()) && armyKnights->lastKnight()->getBag()->hasPhoenixDownIII();
+        bool hasIV_canUseIV = drug4->canUse(armyKnights->lastKnight()) && armyKnights->lastKnight()->getBag()->hasPhoenixDownIV();
+        bool canUse = hasI_canUseI || hasII_canUseII || hasIII_canUseIII || hasIV_canUseIV;
+        if(!canUse) {
+            delete drug1;
+            delete drug2;
+            delete drug3;
+            delete drug4;
+            return;
+        }
+        while(!have_use) {
+            while(temp->type == ANTIDOTE) temp = temp->next;
+            if(temp->type == 1) {
+                if(hasI_canUseI) {
+                    armyKnights->lastKnight()->getBag()->useItem(PHOENIXDOWNI);
+                    have_use = true;
+                }
             }
-            while(!have_use ) {
-                while (temp->type == ANTIDOTE) temp = temp->next;
-                if (temp->type == 1) {
-                    if (drug1->canUse(armyKnights->lastKnight())) {
-                        armyKnights->lastKnight()->getBag()->useItem(PHOENIXDOWNI);
-                        have_use = true;
-                    }
-                }
-                else if (temp->type == 2) {
-                    if (drug2->canUse(armyKnights->lastKnight())) {
-                        armyKnights->lastKnight()->getBag()->useItem(PHOENIXDOWNII);
-                        have_use = true;
-                    }
-                }
-                else if (temp->type == 3) {
-                    if (drug3->canUse(armyKnights->lastKnight())) {
-                        armyKnights->lastKnight()->getBag()->useItem(PHOENIXDOWNIII);
-                        have_use = true;
-                    }
-                }
-                else if (temp->type == 4) {
-                    if (drug4->canUse(armyKnights->lastKnight())) {
-                        armyKnights->lastKnight()->getBag()->useItem(PHOENIXDOWNIV);
-                        have_use = true;
-                    }
-                }
-                temp = temp->next;
+            if(hasII_canUseII) {
+                armyKnights->lastKnight()->getBag()->useItem(PHOENIXDOWNII);
+                have_use = true;
             }
+            if(hasIII_canUseIII) {
+                armyKnights->lastKnight()->getBag()->useItem(PHOENIXDOWNIII);
+                have_use = true;
+            }
+            if(hasIV_canUseIV) {
+                armyKnights->lastKnight()->getBag()->useItem(PHOENIXDOWNIV);
+                have_use = true;
+            }
+        }
         delete drug1;
         delete drug2;
         delete drug3;
@@ -550,6 +547,7 @@ void KnightAdventure::run() {
                 int newHP = armyKnights->lastKnight()->getHP();
                 int opponentDamage =  gau->baseDamageO() * (gau->getLevelO() - armyKnights->lastKnight()->getLevel());
                 newHP-=opponentDamage;
+//                cout << "Lose doi thu co dame: " << opponentDamage;
                 armyKnights->lastKnight()->setHP(newHP);
 //                cout << " \t newHP: " << newHP << endl;
                 if (newHP <= 0) {
