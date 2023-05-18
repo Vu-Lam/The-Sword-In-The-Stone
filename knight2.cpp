@@ -485,6 +485,7 @@ void KnightAdventure::findPhoenix() {
                 armyKnights->lastKnight()->getBag()->useItem(PHOENIXDOWNIV);
                 have_use = true;
             }
+            temp = temp->next;
         }
         delete drug1;
         delete drug2;
