@@ -574,13 +574,12 @@ void KnightAdventure::pushItemToArmy(BaseItem *i) {
 //    cout << "Call to push item\n";
     int totalKnight = armyKnights->count();
     bool added = false;
-    for(int j = 0; j < totalKnight; ++j) {
-        if(armyKnights->getKnightAt(idToPush)->getBag()->canBeAdd(i->type)) {
-            armyKnights->getKnightAt(idToPush)->getBag()->insertFirst(i);
+    for(int j = totalKnight -1 ; j >= 0; --j) {
+        if(armyKnights->getArrayKnight()[j]->getBag()->canBeAdd(i->type)) {
+            armyKnights->getArrayKnight()[j]->getBag()->insertFirst(i);
             added = true;
         }
         if (added) break;
-        --idToPush;
     }
 }
 void KnightAdventure::run() {
