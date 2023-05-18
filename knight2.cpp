@@ -321,6 +321,7 @@ ArmyKnights::ArmyKnights(const string &file_armyknights)
     ifstream fin(file_armyknights);
     if(!fin.is_open()) cout << "File armyknights not found\n";
     fin >> total_knights;
+    max_id = total_knights;
     auto **k = new BaseKnight *[total_knights];
     for (int i = 0; i < total_knights; i++)
     {
@@ -353,10 +354,39 @@ BaseKnight* ArmyKnights::lastKnight() const {
     return array_knights[total_knights-1];
 }
 BaseKnight* ArmyKnights::getKnightAt(int iD) const {
-    return array_knights[iD-1];
+    int index_Of_Id = 0 ;
+    for(int i = 0; i < total_knights; i++) {
+        if(array_knights[i]->getID() == iD) break;
+        index_Of_Id = i;
+    }
+    return array_knights[index_Of_Id];
 }
 bool ArmyKnights::fight(BaseOpponent *opponent) const {
     return lastKnight()->getLevel() >= opponent->getLevelO();
+}
+void ArmyKnights::deleteKnightAt(int id) {
+    if(id < 0 || id > max_id) {
+        cout << "Invalid idx to delete\n"; return;
+    }
+    int find_Index_OfID = total_knights-1;
+    // Find the correct index of id
+    while (find_Index_OfID) {
+        if(array_knights[find_Index_OfID]->getID() == id) break;
+        --find_Index_OfID;
+    }
+    // Override the knight needed to delete
+    for(int i = find_Index_OfID; i < total_knights -1; i++) {
+        array_knights[i] = array_knights[i+1];
+    }
+    --total_knights;
+    // Initial new arr
+    auto **newArrKnight = new BaseKnight * [total_knights];
+    for(int i = 0; i < total_knights; i++) {
+        newArrKnight[i] = array_knights[i];
+    }
+    //Delete old arr_knight
+    delete[] array_knights;
+    array_knights = newArrKnight;
 }
 void ArmyKnights::deleteLastKnight() {
     delete array_knights[total_knights-1];
@@ -494,23 +524,31 @@ void KnightAdventure::findPhoenix() {
     }
 }
 bool KnightAdventure::fightUltimecia() {
-//    cout << "Have 3 item\n";
-    double UltimeciaHP = 5000;
+    int UltimeciaHP = 5000;
     // combat
     int idToFight = armyKnights->count();
     int totalKnight = armyKnights->count();
     double knightBaseDamage[3] = {0.06, 0.05, 0.075};
+    int ID_toDelete = 0;
     // Each knight attack Ultimecia
-    for(int i = 0; i < totalKnight; i++) {
-        if(armyKnights->getKnightAt(idToFight)->getType() != NORMAL) {
-            KnightType t = armyKnights->getKnightAt(idToFight)->getType();
-            int damage = armyKnights->getKnightAt(idToFight)->getHP()*armyKnights->getKnightAt(idToFight)->getLevel()*knightBaseDamage[t];
+    for(int i = totalKnight-1; i >= 0; --i) {
+        if(armyKnights->getArrayKnight()[i]->getType() == NORMAL) continue;
+        if(armyKnights->getArrayKnight()[i]->getType() != NORMAL) {
+            KnightType t = armyKnights->getArrayKnight()[i]->getType();
+            int damage = int(armyKnights->getArrayKnight()[i]->getHP()*armyKnights->getArrayKnight()[i]->getLevel()*knightBaseDamage[t]);
             UltimeciaHP-=damage;
+            ID_toDelete = armyKnights->getArrayKnight()[i]->getID();
         }
-        if(UltimeciaHP > 0) armyKnights->deleteLastKnight();
+        if(UltimeciaHP > 0) armyKnights->deleteKnightAt(ID_toDelete);
         else break;
-        idToFight--;
     }
+    if(UltimeciaHP > 0) {
+        int knightAfterFight = armyKnights->count();
+        for(int i = 0; i < knightAfterFight; i++) {
+            armyKnights->deleteLastKnight();
+        }
+    }
+    // Ultimecia still alive
     return UltimeciaHP<1;
 }
 void KnightAdventure::pushGilToArmy(int x) {

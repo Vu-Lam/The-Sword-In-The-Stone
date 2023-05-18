@@ -109,6 +109,7 @@ public:
     int getGil() const{return gil;}
     KnightType getType() const { return type; }
     int getLevel() const {return level;}
+    int getID() const {return id;}
     void setType(KnightType x) { type = x; }
     bool isPoisoned() const;
     int getAntidote() const;
@@ -122,6 +123,7 @@ class ArmyKnights
 {
 private:
     int total_knights;
+    int max_id;
     BaseKnight **array_knights;
     bool PaladinShield, LancelotSpear, GuinevereHair,ExcaliburSword;
 public:
@@ -131,11 +133,13 @@ public:
     bool fight(BaseOpponent *opponent) const;
     BaseKnight *lastKnight() const;
     BaseKnight *getKnightAt(int iD) const;
+    void deleteKnightAt(int idx);
     void deleteLastKnight();
     bool hasPaladinShield() const;
     bool hasLancelotSpear() const;
     bool hasGuinevereHair() const;
     bool hasExcaliburSword() const;
+    int getMaxID() const { return max_id;}
     void setPaladinShield(bool x) { PaladinShield = x;}
     void setLancelotSpear(bool x) {LancelotSpear = x;}
     void setGuinevereHair(bool x) {GuinevereHair = x;}
