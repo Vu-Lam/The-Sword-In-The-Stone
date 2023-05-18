@@ -434,6 +434,7 @@ void KnightAdventure::loadEvents(const std::string & filein) {
     events = new Events(filein);
 }
 void KnightAdventure::utilizePhoenix() {
+    bool have_usePhoenix = false;
     if (armyKnights->lastKnight()->getBag()->hasPhoenixDown()) {
         //Step 1 => find phoenixdown
         BaseItem *temp = armyKnights->lastKnight()->getBag()->getHead();
@@ -443,6 +444,7 @@ void KnightAdventure::utilizePhoenix() {
             auto *phoenixToUse = new PhoenixDownI(PHOENIXDOWNI);
             if (phoenixToUse->canUse(armyKnights->lastKnight())) {
                 armyKnights->lastKnight()->getBag()->useItem(temp->type);
+                have_usePhoenix = true;
             }
             delete phoenixToUse;
         }
@@ -450,6 +452,7 @@ void KnightAdventure::utilizePhoenix() {
             auto *phoenixToUse = new PhoenixDownII(PHOENIXDOWNII);
             if (phoenixToUse->canUse(armyKnights->lastKnight())) {
                 armyKnights->lastKnight()->getBag()->useItem(temp->type);
+                have_usePhoenix = true;
             }
             delete phoenixToUse;
         }
@@ -457,6 +460,7 @@ void KnightAdventure::utilizePhoenix() {
             auto *phoenixToUse = new PhoenixDownIII(PHOENIXDOWNIII);
             if (phoenixToUse->canUse(armyKnights->lastKnight())) {
                 armyKnights->lastKnight()->getBag()->useItem(temp->type);
+                have_usePhoenix = true;
             }
             delete phoenixToUse;
         }
@@ -464,12 +468,13 @@ void KnightAdventure::utilizePhoenix() {
             auto *phoenixToUse = new PhoenixDownIV(PHOENIXDOWNIV);
             if (phoenixToUse->canUse(armyKnights->lastKnight())) {
                 armyKnights->lastKnight()->getBag()->useItem(temp->type);
+                have_usePhoenix = true;
             }
             delete phoenixToUse;
         }
     }
         //Step 2 => call phoenix
-    else if (armyKnights->lastKnight()->getHP() < 1 && armyKnights->lastKnight()->getGil() >= 100) {
+    if (!have_usePhoenix && armyKnights->lastKnight()->getHP() < 1 && armyKnights->lastKnight()->getGil() >= 100) {
         int newGil = armyKnights->lastKnight()->getGil() - 100;
         armyKnights->lastKnight()->setGil(newGil);
         armyKnights->lastKnight()->setHP(armyKnights->lastKnight()->getMaxHP() / 2);
