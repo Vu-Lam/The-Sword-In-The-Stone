@@ -168,6 +168,28 @@ string BaseBag::toString() const {
 void BaseBag::useItem(ItemType t) {
     if(head == nullptr) return;
     --totalI;
+    if(head->type == t) {
+        if (t == PHOENIXDOWNI) {
+            head = new PhoenixDownI(PHOENIXDOWNI);
+        }
+        else if (t == PHOENIXDOWNII) {
+            head = new PhoenixDownII(PHOENIXDOWNII);
+        }
+        else if (t == PHOENIXDOWNIII) {
+            head = new PhoenixDownIII(PHOENIXDOWNIII);
+        }
+        else if (t == PHOENIXDOWNIV) {
+            head = new PhoenixDownIV(PHOENIXDOWNIV);
+        }
+        else {
+            head = new Antidote(ANTIDOTE);
+        }
+        head->use(knight);
+        BaseItem* oldHead = head;
+        head = head->next;
+        delete oldHead;
+        return;
+    }
     BaseItem *thuoc = this->get(t);
     if (t == PHOENIXDOWNI) {
         thuoc = new PhoenixDownI(PHOENIXDOWNI);
@@ -185,6 +207,7 @@ void BaseBag::useItem(ItemType t) {
         thuoc = new Antidote(ANTIDOTE);
     }
     thuoc->use(knight);
+    delete thuoc;
 }
 bool BaseBag::hasPhoenixDown() {
     if(!totalI) return false;
@@ -443,21 +466,20 @@ void KnightAdventure::findPhoenix() {
         }
         while(!have_use) {
             while(temp->type == ANTIDOTE) temp = temp->next;
-            if(temp->type == 1) {
-                if(hasI_canUseI) {
+//            cout << "Type found: " << temp->type;
+            if(temp->type == 1 && hasI_canUseI){
                     armyKnights->lastKnight()->getBag()->useItem(PHOENIXDOWNI);
                     have_use = true;
-                }
             }
-            if(hasII_canUseII) {
+            else if(temp->type == 2 && hasII_canUseII){
                 armyKnights->lastKnight()->getBag()->useItem(PHOENIXDOWNII);
                 have_use = true;
             }
-            if(hasIII_canUseIII) {
+            else if(temp->type == 3 && hasIII_canUseIII){
                 armyKnights->lastKnight()->getBag()->useItem(PHOENIXDOWNIII);
                 have_use = true;
             }
-            if(hasIV_canUseIV) {
+            else if(temp->type == 4 && hasIV_canUseIV){
                 armyKnights->lastKnight()->getBag()->useItem(PHOENIXDOWNIV);
                 have_use = true;
             }
@@ -543,7 +565,6 @@ void KnightAdventure::run() {
 //                cout << "Win doi thu co dame: " << gau->baseDamageO() << endl;
             }
             else {
-//                cout << "Lose doi thu co dame: " << gau->baseDamageO();
                 int newHP = armyKnights->lastKnight()->getHP();
                 int opponentDamage =  gau->baseDamageO() * (gau->getLevelO() - armyKnights->lastKnight()->getLevel());
                 newHP-=opponentDamage;
