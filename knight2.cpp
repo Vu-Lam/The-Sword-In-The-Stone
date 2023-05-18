@@ -169,25 +169,27 @@ void BaseBag::useItem(ItemType t) {
     if(head == nullptr) return;
     --totalI;
     if(head->type == t) {
+        BaseItem *temp = head;
         if (t == PHOENIXDOWNI) {
-            head = new PhoenixDownI(PHOENIXDOWNI);
+            temp = new PhoenixDownI(PHOENIXDOWNI);
         }
         else if (t == PHOENIXDOWNII) {
-            head = new PhoenixDownII(PHOENIXDOWNII);
+            temp = new PhoenixDownII(PHOENIXDOWNII);
         }
         else if (t == PHOENIXDOWNIII) {
-            head = new PhoenixDownIII(PHOENIXDOWNIII);
+            temp = new PhoenixDownIII(PHOENIXDOWNIII);
         }
         else if (t == PHOENIXDOWNIV) {
-            head = new PhoenixDownIV(PHOENIXDOWNIV);
+            temp = new PhoenixDownIV(PHOENIXDOWNIV);
         }
         else {
-            head = new Antidote(ANTIDOTE);
+            temp = new Antidote(ANTIDOTE);
         }
-        head->use(knight);
-        BaseItem* oldHead = head;
+        temp->use(knight);
+        delete temp;
+        BaseItem *OldHead = head;
         head = head->next;
-        delete oldHead;
+        delete OldHead;
         return;
     }
     BaseItem *thuoc = this->get(t);
