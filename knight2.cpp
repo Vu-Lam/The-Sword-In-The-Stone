@@ -362,6 +362,7 @@ BaseKnight* ArmyKnights::getKnightAt(int iD) const {
     return array_knights[index_Of_Id];
 }
 bool ArmyKnights::fight(BaseOpponent *opponent) const {
+//    cout << "Level O:" <<opponent->getLevelO() << "\t level Knight: " <<lastKnight()->getLevel() ;
     return lastKnight()->getLevel() >= opponent->getLevelO();
 }
 void ArmyKnights::deleteKnightAt(int id) {
@@ -600,6 +601,9 @@ void KnightAdventure::run() {
             if (armyKnights->fight(gau) || armyKnights->lastKnight()->getType()==LANCELOT || armyKnights->lastKnight()->getType()==PALADIN) {
                 int newGil = armyKnights->lastKnight()->getGil();
                 newGil += gau->gilO();
+                int gilToPush = 0;
+                gilToPush = newGil > 999 ? newGil - 999 : 0;
+                this->pushGilToArmy(gilToPush);
                 newGil = newGil > 999 ? 999 : newGil;
                 armyKnights->lastKnight()->setGil(newGil);
 //                cout << "Win doi thu co dame: " << gau->baseDamageO() << endl;
@@ -660,6 +664,7 @@ void KnightAdventure::run() {
         }
         else if (events->get(i) == 7) {
             auto *Queen = new BaseOpponent(i,events->get(i));
+//            cout << "Level0: " << Queen->getLevelO() << endl;
             if(armyKnights->fight(Queen)) {
                 int newGilOfLastKnight = armyKnights->lastKnight()->getGil()*2;
                 if(newGilOfLastKnight>999) {
