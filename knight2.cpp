@@ -265,8 +265,8 @@ bool BaseBag::hasAntidote() {
     }
     return false;
 }
-void BaseBag::deleteFistItem() {
-    if(totalI < 3) {
+void BaseBag::deleteFistItem(int totalItem) {
+    if(totalItem < 3) {
         head = nullptr;
         totalI = 0; return;
     }
@@ -605,8 +605,9 @@ void KnightAdventure::run() {
                 else {
                     //Trung doc
 //                    cout << "Trung doc\n";
+                    int totalItem = armyKnights->lastKnight()->getBag()->getToTalItem();
                     for (int j = 0; j < 3; j++) {
-                        armyKnights->lastKnight()->getBag()->deleteFistItem();
+                        armyKnights->lastKnight()->getBag()->deleteFistItem(totalItem);
                     }
                     int newHP = armyKnights->lastKnight()->getHP();
                     newHP -= 10;
