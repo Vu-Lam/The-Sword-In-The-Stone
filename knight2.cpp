@@ -478,7 +478,8 @@ void KnightAdventure::utilizePhoenix() {
         int newGil = armyKnights->lastKnight()->getGil() - 100;
         armyKnights->lastKnight()->setGil(newGil);
         armyKnights->lastKnight()->setHP(armyKnights->lastKnight()->getMaxHP() / 2);
-    } else if (armyKnights->lastKnight()->getHP() < 1) armyKnights->deleteLastKnight();
+    }
+    if (armyKnights->lastKnight()->getHP() < 1) armyKnights->deleteLastKnight();
     else return;
 }
 void KnightAdventure::findPhoenix() {
