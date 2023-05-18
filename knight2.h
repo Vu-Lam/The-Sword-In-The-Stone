@@ -230,7 +230,7 @@ public:
     bool hasPhoenixDownIII();
     bool hasPhoenixDownIV();
     bool hasAntidote();
-    void deleteFistItem();
+    void deleteFistItem(int totalItem);
     ~BaseBag();
 };
 
